@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UTCIS — Unidad de Transferencia de Conocimiento e Innovación Social</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.10/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#0a0a0a;overflow-x:hidden}
+::selection{background:#E8D5B7;color:#0a0a0a}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lineGrow{from{width:0}to{width:60px}}
+@keyframes glow{0%,100%{opacity:.3}50%{opacity:.6}}
+.nl{color:#666;text-decoration:none;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Mono',monospace;transition:color .3s;cursor:pointer;background:none;border:none;padding:0}
+.nl:hover{color:#E8D5B7}
+.pc{padding:40px 32px;background:#111;border:1px solid #1a1a1a;border-radius:2px;transition:all .4s cubic-bezier(.16,1,.3,1);overflow:hidden}
+.pc:hover{border-color:#333;transform:translateY(-4px)}
+.pc:hover .pn{color:#E8D5B7!important}
+.rc{cursor:pointer;background:#111;border:1px solid #222;border-radius:2px;transition:all .5s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden}
+.rc:hover{border-color:#333}
+.rc.exp{background:#1a1a1a}
+.cta{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#0a0a0a;background:#E8D5B7;border:none;padding:16px 36px;cursor:pointer;border-radius:1px;transition:all .3s}
+.cta:hover{background:#d4b896;transform:translateY(-2px)}
+@media(max-width:900px){.g2{grid-template-columns:1fr!important}.g3{grid-template-columns:1fr!important}section{padding-left:24px!important;padding-right:24px!important}nav{padding:16px 20px!important}.nvl{display:none!important}.ht{font-size:36px!important}.sd{display:none!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef}=React;
+const RD=[
+{id:1,tag:"IA + CLÍNICA",title:"Instrumento de Predicción de Abandono Temprano",sub:"Inteligencia artificial al servicio de la retención terapéutica",sum:"El primer instrumento asistido por IA diseñado para anticipar el abandono temprano en tratamiento de adicciones, transformando datos clínicos regionales en predicciones accionables.",desc:"Cada paciente que abandona el tratamiento antes de tiempo representa una vida en riesgo y recursos clínicos subutilizados. Este proyecto desarrolla un activo tecnológico que sistematiza la experiencia clínica regional del sur de Chile para predecir —no reaccionar— al abandono. A través de un flujo de 8 fases secuenciales que incluyen revisión sistemática asistida por IA, validación con expertos, pilotaje con población real y estudio psicométrico formal, se construye un modelo de riesgo que transforma la clínica en ciencia aplicada.",st:"En desarrollo",ph:"8 fases · 8-12 semanas",ic:"🧠",cl:"#E8D5B7"},
+{id:2,tag:"NEUROCIENCIA",title:"Funciones Ejecutivas y Consumo Problemático",sub:"Alianza UTCIS × Laboratorio de Psicología Experimental UACh",sum:"Caracterización del perfil neurocognitivo de personas en tratamiento por adicciones en la Región de Los Lagos — algo que no existe de forma sistematizada en el sur de Chile.",desc:"La inhibición, la memoria de trabajo y la flexibilidad cognitiva se encuentran deterioradas en personas con consumo problemático de sustancias. El Laboratorio de Psicología Experimental del Dr. Felipe Muñoz-Rubke posee modelos de medición estructural validados y tareas experimentales sensibles; la UTCIS aporta acceso a población clínica real y la experiencia para interpretar resultados en clave terapéutica. Juntos, buscan generar datos publicables que fundamenten intervenciones de estimulación cognitiva basadas en evidencia empírica.",st:"Propuesta activa",ph:"Estudio piloto · 12 meses",ic:"⚡",cl:"#B7D5E8"},
+{id:3,tag:"SESGOS COGNITIVOS",title:"Autosabotaje y Toma de Decisiones en Adicciones",sub:"Neurociencia cognitiva aplicada al fenómeno del autosabotaje",sum:"Un cruce novedoso entre neurociencia cognitiva y psicología de las adicciones: cómo los sesgos cognitivos operan sistemáticamente contra los objetivos de recuperación.",desc:"El descuento temporal, el sesgo de confirmación y la ilusión de control operan como fuerzas invisibles que sabotean la recuperación. La decisión de consumir frente a mantener la abstinencia es, en esencia, un problema de toma de decisiones bajo la influencia de sesgos cognitivos y estados emocionales. Esta línea utiliza paradigmas experimentales del Laboratorio adaptados al contexto clínico de adicciones — un cruce poco explorado en Latinoamérica con alto potencial de publicación internacional.",st:"Propuesta activa",ph:"Línea de investigación emergente",ic:"🔮",cl:"#D5B7E8"},
+{id:4,tag:"GAMIFICACIÓN",title:"Juegos Terapéuticos para Adicciones",sub:"Entornos lúdicos para entrenamiento en toma de decisiones",sum:"Co-diseño de intervenciones gamificadas para personas en tratamiento, combinando principios de diseño de juegos con necesidades terapéuticas reales.",desc:"El Laboratorio tiene experiencia acumulada en diseño y evaluación de intervenciones basadas en juegos, incluyendo juegos de mesa y digitales. En el campo del tratamiento de adicciones, existe un interés creciente por las intervenciones gamificadas para psicoeducación, entrenamiento en habilidades de afrontamiento y rehabilitación cognitiva. Sin embargo, la evidencia empírica en población hispanoparlante es escasa. Esta línea busca co-diseñar un juego orientado al entrenamiento en toma de decisiones, avalado por evidencia empírica y con valor de transferencia tecnológica.",st:"Propuesta activa",ph:"Co-diseño experimental",ic:"🎮",cl:"#B7E8C5"},
+{id:5,tag:"DINÁMICA GRUPAL",title:"Cooperación y Procesos Terapéuticos",sub:"Juegos económicos aplicados a comunidades terapéuticas",sum:"Exploración de cómo el consumo problemático altera la toma de decisiones cooperativas y qué significa esto para la comunidad terapéutica.",desc:"Los procesos grupales son un componente central del tratamiento de adicciones: grupos terapéuticos, comunidades terapéuticas, redes de apoyo social. La capacidad de cooperar, confiar en otros y sostener compromisos interpersonales es justamente lo que el consumo problemático tiende a deteriorar. Utilizando paradigmas de juegos económicos — juego del dictador, bienes públicos, dilema del prisionero — esta línea analiza cómo el proceso terapéutico se relaciona con patrones de cooperación y confianza interpersonal.",st:"Propuesta activa",ph:"Estudio exploratorio",ic:"🤝",cl:"#E8C5B7"},
+{id:6,tag:"FORMACIÓN",title:"Programa de Técnicos en Rehabilitación",sub:"Primera formación especializada de la UACh en la zona sur",sum:"Creación de un programa de formación para Técnicos en Rehabilitación con malla curricular basada en la evidencia generada por la propia unidad.",desc:"La UTCIS impulsa la creación del primer programa de formación para Técnicos en Rehabilitación de la UACh, cubriendo una vacante histórica en la zona sur de Chile. La malla curricular se alimenta directamente de la evidencia que genera el instrumento de predicción de abandono y las investigaciones en curso. Además de su valor formativo, el programa genera ingresos directos por matrículas, contribuyendo a la sostenibilidad financiera de la unidad.",st:"Planificación",ph:"Diseño curricular",ic:"📚",cl:"#C5D5B7"}
+];
+
+function useIV(r,t=.15){const[v,s]=useState(false);useEffect(()=>{if(!r.current)return;const o=new IntersectionObserver(([e])=>{if(e.isIntersecting)s(true)},{threshold:t});o.observe(r.current);return()=>o.disconnect()},[r,t]);return v}
+
+function AS({children,delay=0,className=""}){const r=useRef(null);const v=useIV(r);return<div ref={r} className={className} style={{opacity:v?1:0,transform:v?"translateY(0)":"translateY(40px)",transition:`opacity .8s cubic-bezier(.16,1,.3,1) ${delay}s, transform .8s cubic-bezier(.16,1,.3,1) ${delay}s`}}>{children}</div>}
+
+function RC({item:m,isExpanded:ex,onToggle:ot}){return<div onClick={ot} className={`rc${ex?' exp':''}`} style={{padding:ex?"40px":"32px",borderColor:ex?m.cl+"55":undefined}}>
+<div style={{position:"absolute",top:0,left:0,width:ex?"100%":"0%",height:"2px",background:`linear-gradient(90deg,${m.cl},transparent)`,transition:"width .8s cubic-bezier(.16,1,.3,1)"}}/>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:"16px"}}>
+<div style={{flex:1}}>
+<div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"12px",flexWrap:"wrap"}}>
+<span style={{fontSize:"10px",letterSpacing:"3px",color:m.cl,fontFamily:"'DM Mono',monospace",textTransform:"uppercase"}}>{m.tag}</span>
+<span style={{fontSize:"9px",letterSpacing:"2px",color:"#555",fontFamily:"'DM Mono',monospace",background:"#1a1a1a",padding:"3px 10px",borderRadius:"1px",textTransform:"uppercase"}}>{m.st}</span>
+</div>
+<h3 style={{fontFamily:"'Playfair Display',serif",fontSize:ex?"28px":"22px",fontWeight:400,color:"#e8e4de",marginBottom:"8px",lineHeight:1.3,transition:"font-size .5s cubic-bezier(.16,1,.3,1)"}}>{m.title}</h3>
+<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:"14px",color:"#777",fontStyle:"italic",marginBottom:ex?"20px":"12px"}}>{m.sub}</p>
+<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:"14px",color:"#999",lineHeight:1.7,marginBottom:ex?"20px":0}}>{m.sum}</p>
+<div style={{maxHeight:ex?"500px":"0",opacity:ex?1:0,overflow:"hidden",transition:"max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s ease"}}>
+<div style={{borderTop:"1px solid #222",paddingTop:"20px",marginTop:"4px"}}>
+<p style={{fontFamily:"'DM Sans',sans-serif",fontSize:"15px",color:"#bbb",lineHeight:1.8,marginBottom:"20px"}}>{m.desc}</p>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"11px",color:m.cl,letterSpacing:"1px"}}>{m.ic} {m.ph}</span>
+</div></div></div>
+<div style={{fontSize:"24px",color:"#333",transition:"transform .4s ease",transform:ex?"rotate(45deg)":"rotate(0)",flexShrink:0,marginTop:"4px"}}>+</div>
+</div></div>}
+
+function App(){
+const[eid,setEid]=useState(null);
+const[sy,setSy]=useState(0);
+useEffect(()=>{const h=()=>setSy(window.scrollY);window.addEventListener("scroll",h,{passive:true});return()=>window.removeEventListener("scroll",h)},[]);
+const go=(id)=>document.getElementById(id)?.scrollIntoView({behavior:"smooth"});
+const nv=[{id:"inicio",l:"Inicio"},{id:"mision",l:"Misión"},{id:"ejes",l:"Ejes"},{id:"investigacion",l:"Investigación"},{id:"alianzas",l:"Alianzas"},{id:"contacto",l:"Contacto"}];
+
+return<div style={{background:"#0a0a0a",color:"#e8e4de",minHeight:"100vh",fontFamily:"'DM Sans',sans-serif",overflowX:"hidden"}}>
+
+{/* Nav */}
+<nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"20px 40px",display:"flex",justifyContent:"space-between",alignItems:"center",background:sy>50?"rgba(10,10,10,0.9)":"transparent",backdropFilter:sy>50?"blur(20px)":"none",borderBottom:sy>50?"1px solid #1a1a1a":"1px solid transparent",transition:"all .4s ease"}}>
+<div style={{display:"flex",alignItems:"center",gap:"12px"}}>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"14px",fontWeight:500,letterSpacing:"6px",color:"#E8D5B7"}}>UTCIS</span>
+<span style={{width:"1px",height:"16px",background:"#333"}}/>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"9px",color:"#555",letterSpacing:"2px"}}>UACh</span>
+</div>
+<div className="nvl" style={{display:"flex",gap:"28px"}}>{nv.map(i=><button key={i.id} className="nl" onClick={()=>go(i.id)}>{i.l}</button>)}</div>
+</nav>
+
+{/* Hero */}
+<section id="inicio" style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",padding:"120px 60px 80px",position:"relative"}}>
+<div style={{position:"absolute",top:"20%",right:"10%",width:"400px",height:"400px",background:"radial-gradient(circle,rgba(232,213,183,0.04) 0%,transparent 70%)",borderRadius:"50%",filter:"blur(60px)",animation:"glow 6s ease-in-out infinite"}}/>
+<div style={{position:"absolute",bottom:"20%",left:"5%",width:"300px",height:"300px",background:"radial-gradient(circle,rgba(183,213,232,0.03) 0%,transparent 70%)",borderRadius:"50%",filter:"blur(80px)",animation:"glow 8s ease-in-out infinite 2s"}}/>
+<div style={{maxWidth:"900px",position:"relative",zIndex:2}}>
+<div style={{animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) .2s both"}}>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"11px",letterSpacing:"5px",color:"#555",textTransform:"uppercase",display:"block",marginBottom:"32px"}}>Centro Clínico y Comunitario · Universidad Austral de Chile · Puerto Montt</span>
+</div>
+<div style={{animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) .4s both"}}>
+<h1 className="ht" style={{fontFamily:"'Playfair Display',serif",fontSize:"clamp(42px,6vw,80px)",fontWeight:400,lineHeight:1.1,marginBottom:"12px"}}>Unidad de Transferencia</h1>
+<h1 className="ht" style={{fontFamily:"'Playfair Display',serif",fontSize:"clamp(42px,6vw,80px)",fontWeight:400,lineHeight:1.1,marginBottom:"12px"}}>de Conocimiento e{" "}<span style={{fontStyle:"italic",background:"linear-gradient(135deg,#E8D5B7 0%,#d4b896 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Innovación</span></h1>
+<h1 className="ht" style={{fontFamily:"'Playfair Display',serif",fontSize:"clamp(42px,6vw,80px)",fontWeight:400,lineHeight:1.1,marginBottom:"40px"}}>Social</h1>
+</div>
+<div style={{animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) .6s both"}}>
+<div style={{width:"60px",height:"1px",background:"#E8D5B7",marginBottom:"28px",animation:"lineGrow 1.2s cubic-bezier(.16,1,.3,1) .8s both"}}/>
+<p style={{fontSize:"18px",color:"#888",lineHeight:1.8,maxWidth:"600px",fontWeight:300}}>Donde la clínica de adicciones se encuentra con la inteligencia predictiva. Transformamos experiencia clínica en evidencia científica y la evidencia en innovación social.</p>
+</div>
+<div style={{animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) .9s both",marginTop:"48px",display:"flex",gap:"40px",alignItems:"center",flexWrap:"wrap"}}>
+<button className="cta" onClick={()=>go("investigacion")}>Explorar investigaciones</button>
+<button className="nl" onClick={()=>go("mision")} style={{fontSize:"11px"}}>Conocer más →</button>
+</div>
+</div>
+<div className="sd" style={{position:"absolute",right:"60px",top:"50%",transform:"translateY(-50%) rotate(90deg)",fontFamily:"'DM Mono',monospace",fontSize:"10px",letterSpacing:"4px",color:"#222"}}>UTCIS — 2025</div>
+</section>
+
+{/* Mission */}
+<section id="mision" style={{padding:"120px 60px",position:"relative"}}>
+<div style={{position:"absolute",top:0,left:"60px",right:"60px",height:"1px",background:"linear-gradient(90deg,#222,transparent 50%)"}}/>
+<div style={{maxWidth:"1200px",margin:"0 auto"}}>
+<AS><span style={{fontFamily:"'DM Mono',monospace",fontSize:"10px",letterSpacing:"5px",color:"#E8D5B7",textTransform:"uppercase"}}>01 — Nuestra Misión</span></AS>
+<div className="g2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"80px",marginTop:"48px"}}>
+<AS delay={.1}><h2 style={{fontFamily:"'Playfair Display',serif",fontSize:"38px",fontWeight:400,lineHeight:1.3}}>No podemos seguir reaccionando al abandono cuando ya ocurrió. <span style={{fontStyle:"italic",color:"#E8D5B7"}}>Necesitamos predecirlo.</span></h2></AS>
+<AS delay={.2}>
+<p style={{fontSize:"16px",color:"#888",lineHeight:1.9,marginBottom:"28px",fontWeight:300}}>La UTCIS es el puente entre la alta complejidad clínica del Centro Clínico y Comunitario de la UACh y la inteligencia predictiva. Nacimos con la convicción de que la experiencia clínica acumulada en el sur de Chile merece ser sistematizada, validada y transformada en herramientas que impacten directamente la calidad del tratamiento.</p>
+<p style={{fontSize:"16px",color:"#888",lineHeight:1.9,fontWeight:300}}>En el tratamiento de adicciones, el éxito no se mide solo por quién llega, sino por quién se queda. Cada paciente que se retira representa una vida en riesgo y recursos clínicos subutilizados. Por eso, nuestra primera misión es desarrollar tecnología predictiva que permita intervenir antes de que el abandono ocurra.</p>
+</AS></div></div></section>
+
+{/* Pillars */}
+<section id="ejes" style={{padding:"120px 60px",position:"relative"}}>
+<div style={{position:"absolute",top:0,left:"60px",right:"60px",height:"1px",background:"linear-gradient(90deg,transparent,#222 50%,transparent)"}}/>
+<div style={{maxWidth:"1200px",margin:"0 auto"}}>
+<AS>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"10px",letterSpacing:"5px",color:"#E8D5B7",textTransform:"uppercase"}}>02 — Ejes Estratégicos</span>
+<h2 style={{fontFamily:"'Playfair Display',serif",fontSize:"38px",fontWeight:400,marginTop:"20px",marginBottom:"60px"}}>Tres motores, <span style={{fontStyle:"italic",color:"#E8D5B7"}}>un propósito</span></h2>
+</AS>
+<div className="g3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"24px"}}>
+{[{n:"I",t:"Innovación Predictiva",a:"#E8D5B7",d:"Desarrollo del primer instrumento de predicción de abandono temprano asistido por IA, sistematizando la experiencia clínica regional en un activo tecnológico con rigor psicométrico."},
+{n:"II",t:"Formación de Capital Humano",a:"#B7D5E8",d:"Creación del primer programa de formación para Técnicos en Rehabilitación de la UACh, con una malla curricular basada en la evidencia que la propia unidad genera."},
+{n:"III",t:"Extensión de Alto Impacto",a:"#D5B7E8",d:"Transición de la asistencia a la generación de boletines, artículos y recursos que posicionen a la sede como referente técnico en salud mental y adicciones del sur del país."}
+].map((p,i)=><AS key={i} delay={.1*(i+1)}><div className="pc">
+<span className="pn" style={{fontFamily:"'Playfair Display',serif",fontSize:"48px",fontWeight:300,color:"#1a1a1a",display:"block",marginBottom:"24px",transition:"color .4s ease"}}>{p.n}</span>
+<div style={{width:"30px",height:"2px",background:p.a,marginBottom:"20px"}}/>
+<h3 style={{fontFamily:"'Playfair Display',serif",fontSize:"22px",fontWeight:400,marginBottom:"16px"}}>{p.t}</h3>
+<p style={{fontSize:"14px",color:"#777",lineHeight:1.8,fontWeight:300}}>{p.d}</p>
+</div></AS>)}</div></div></section>
+
+{/* Research */}
+<section id="investigacion" style={{padding:"120px 60px",position:"relative",background:"linear-gradient(180deg,#0a0a0a 0%,#0d0d0d 50%,#0a0a0a 100%)"}}>
+<div style={{position:"absolute",top:0,left:"60px",right:"60px",height:"1px",background:"linear-gradient(90deg,#222,transparent 80%)"}}/>
+<div style={{maxWidth:"900px",margin:"0 auto"}}>
+<AS>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"10px",letterSpacing:"5px",color:"#E8D5B7",textTransform:"uppercase"}}>03 — Investigaciones e Iniciativas</span>
+<h2 style={{fontFamily:"'Playfair Display',serif",fontSize:"38px",fontWeight:400,marginTop:"20px"}}>Lo que estamos <span style={{fontStyle:"italic",color:"#E8D5B7"}}>construyendo</span></h2>
+<p style={{fontSize:"15px",color:"#666",marginTop:"16px",marginBottom:"60px",lineHeight:1.7,fontWeight:300,maxWidth:"600px"}}>Cada iniciativa es un paso hacia una clínica de precisión en adicciones. Haz clic en cualquier proyecto para explorar su alcance completo.</p>
+</AS>
+<div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+{RD.map((m,i)=><AS key={m.id} delay={.05*(i+1)}><RC item={m} isExpanded={eid===m.id} onToggle={()=>setEid(eid===m.id?null:m.id)}/></AS>)}
+</div></div></section>
+
+{/* Alliances */}
+<section id="alianzas" style={{padding:"120px 60px",position:"relative"}}>
+<div style={{position:"absolute",top:0,left:"60px",right:"60px",height:"1px",background:"linear-gradient(90deg,transparent,#222,transparent)"}}/>
+<div style={{maxWidth:"1200px",margin:"0 auto"}}>
+<AS><span style={{fontFamily:"'DM Mono',monospace",fontSize:"10px",letterSpacing:"5px",color:"#E8D5B7",textTransform:"uppercase"}}>04 — Alianzas Estratégicas</span></AS>
+<div className="g2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"60px",marginTop:"48px"}}>
+<AS delay={.1}>
+<h2 style={{fontFamily:"'Playfair Display',serif",fontSize:"34px",fontWeight:400,lineHeight:1.3,marginBottom:"28px"}}>Sinergia con el <span style={{fontStyle:"italic",color:"#B7D5E8"}}>Laboratorio de Psicología Experimental</span></h2>
+<p style={{fontSize:"15px",color:"#888",lineHeight:1.9,fontWeight:300,marginBottom:"24px"}}>La colaboración con el Laboratorio de Psicología Experimental y Neurociencia Cognitiva de la UACh, liderado por el Dr. Felipe Muñoz-Rubke, representa un puente entre la intervención clínica y la investigación experimental. El laboratorio aporta modelos de medición validados y rigor metodológico; la UTCIS ofrece acceso a población clínica y contextos de aplicación reales.</p>
+<p style={{fontSize:"15px",color:"#888",lineHeight:1.9,fontWeight:300}}>Es una alianza que posiciona a la Sede Puerto Montt como un polo de investigación aplicada en salud mental con base experimental — una combinación inusual en universidades regionales.</p>
+</AS>
+<AS delay={.2}>
+<div style={{background:"#111",border:"1px solid #1a1a1a",borderRadius:"2px",padding:"40px"}}>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"9px",letterSpacing:"3px",color:"#B7D5E8",textTransform:"uppercase",display:"block",marginBottom:"24px"}}>Pilares de vinculación</span>
+{["Funciones ejecutivas y consumo problemático","Sesgos cognitivos y autosabotaje","Gamificación terapéutica","Dinámicas de cooperación grupal","IA aplicada a salud mental"].map((x,i)=><div key={i} style={{padding:"16px 0",borderBottom:i<4?"1px solid #1a1a1a":"none",display:"flex",alignItems:"center",gap:"16px"}}>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"10px",color:"#333"}}>0{i+1}</span>
+<span style={{fontSize:"15px",color:"#999",fontWeight:300}}>{x}</span></div>)}
+<div style={{marginTop:"32px",padding:"20px",background:"#0a0a0a",borderRadius:"2px"}}>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"9px",letterSpacing:"2px",color:"#555",textTransform:"uppercase"}}>Investigador principal del laboratorio</span>
+<p style={{fontFamily:"'Playfair Display',serif",fontSize:"18px",marginTop:"8px"}}>Dr. Felipe Muñoz-Rubke</p>
+<p style={{fontSize:"13px",color:"#666",marginTop:"4px",fontWeight:300}}>Profesor Asociado · Instituto de Psicología · UACh</p>
+<p style={{fontSize:"13px",color:"#666",marginTop:"2px",fontWeight:300,fontStyle:"italic"}}>PhD en Ciencias Cognitivas y Neurociencias, Indiana University</p>
+</div></div></AS></div></div></section>
+
+{/* Team */}
+<section id="contacto" style={{padding:"120px 60px 80px",position:"relative"}}>
+<div style={{position:"absolute",top:0,left:"60px",right:"60px",height:"1px",background:"linear-gradient(90deg,#222,transparent 30%)"}}/>
+<div style={{maxWidth:"1200px",margin:"0 auto"}}>
+<AS><span style={{fontFamily:"'DM Mono',monospace",fontSize:"10px",letterSpacing:"5px",color:"#E8D5B7",textTransform:"uppercase"}}>05 — Equipo</span></AS>
+<div className="g2" style={{display:"grid",gridTemplateColumns:"1.5fr 1fr",gap:"80px",marginTop:"48px"}}>
+<AS delay={.1}>
+<h2 style={{fontFamily:"'Playfair Display',serif",fontSize:"34px",fontWeight:400,lineHeight:1.3,marginBottom:"24px"}}>Pablo Carrillo Chávez</h2>
+<div style={{width:"40px",height:"2px",background:"#E8D5B7",marginBottom:"24px"}}/>
+<p style={{fontSize:"15px",color:"#888",lineHeight:1.9,fontWeight:300,marginBottom:"20px"}}>Psicólogo Clínico, Magíster en Psicología Clínica Adultos (UACh). Profesional de la UTCIS del Centro Clínico y Comunitario de la Universidad Austral de Chile, Sede Puerto Montt.</p>
+<p style={{fontSize:"15px",color:"#888",lineHeight:1.9,fontWeight:300,marginBottom:"20px"}}>Cuenta con 8 años de experiencia en prevención, detección y tratamiento de consumo problemático de sustancias y adicciones. Ha trabajado en programas del Servicio de Salud, programas municipales y programas avalados por SENDA.</p>
+<p style={{fontSize:"15px",color:"#888",lineHeight:1.9,fontWeight:300}}>Integra activamente herramientas de inteligencia artificial en su práctica profesional, explorando sus aplicaciones en la intervención clínica y en la generación de recursos innovadores para el campo de las adicciones.</p>
+</AS>
+<AS delay={.2}>
+<div style={{background:"#111",border:"1px solid #1a1a1a",borderRadius:"2px",padding:"40px"}}>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"9px",letterSpacing:"3px",color:"#E8D5B7",textTransform:"uppercase",display:"block",marginBottom:"32px"}}>Credenciales</span>
+{[{l:"Formación",v:"Psicólogo Clínico · Mg. Psicología Clínica Adultos"},{l:"Institución",v:"Centro Clínico y Comunitario · UACh"},{l:"Sede",v:"Puerto Montt, Región de Los Lagos"},{l:"Experiencia",v:"8 años en adicciones"},{l:"Especialización",v:"IA aplicada a práctica clínica"}].map((x,i)=><div key={i} style={{marginBottom:i<4?"20px":0,paddingBottom:i<4?"20px":0,borderBottom:i<4?"1px solid #1a1a1a":"none"}}>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"9px",letterSpacing:"2px",color:"#555",textTransform:"uppercase",display:"block",marginBottom:"6px"}}>{x.l}</span>
+<span style={{fontSize:"14px",color:"#bbb",fontWeight:300}}>{x.v}</span></div>)}</div>
+</AS></div></div></section>
+
+{/* Footer */}
+<footer style={{padding:"40px 60px",borderTop:"1px solid #1a1a1a",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"16px"}}>
+<div style={{display:"flex",alignItems:"center",gap:"12px"}}>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"12px",fontWeight:500,letterSpacing:"4px",color:"#333"}}>UTCIS</span>
+<span style={{width:"1px",height:"12px",background:"#222"}}/>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"9px",color:"#333",letterSpacing:"2px"}}>Centro Clínico y Comunitario · UACh · Puerto Montt</span>
+</div>
+<span style={{fontFamily:"'DM Mono',monospace",fontSize:"9px",color:"#333",letterSpacing:"2px"}}>© 2025 · Todos los derechos reservados</span>
+</footer>
+</div>}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
