@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EPT-C · Estilo Personal del Terapeuta</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --black:    #0a0a0a;
+    --deep:     #111111;
+    --surface:  #181818;
+    --card:     #1e1e1e;
+    --border:   #2a2a2a;
+    --gold:     #c9a84c;
+    --gold-dim: #8a6f2e;
+    --gold-glow:rgba(201,168,76,0.12);
+    --text:     #e8e0d0;
+    --muted:    #7a7060;
+    --error:    #c0614a;
+    --radius:   2px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--deep);
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .logo-text { font-size: 12px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
+  .logo-text strong { display: block; color: var(--text); font-weight: 400; letter-spacing: .08em; font-size: 13px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--deep);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+  }
+  .progress-steps {
+    display: flex;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .step-tab {
+    flex: 1;
+    padding: 14px 0;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all .3s;
+    cursor: default;
+  }
+  .step-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .step-tab.done   { color: var(--text); border-bottom-color: var(--gold-dim); }
+
+  /* ── MAIN ── */
+  main { max-width: 720px; margin: 0 auto; padding: 56px 24px 80px; }
+
+  /* ── PAGES ── */
+  .page { display: none; animation: fadeIn .35s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── TYPOGRAPHY ── */
+  .eyebrow {
+    font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 300; line-height: 1.15;
+    color: var(--text); margin-bottom: 16px;
+  }
+  h1 em { font-style: italic; color: var(--gold); }
+  .intro-text {
+    font-size: 14px; color: var(--muted); max-width: 520px;
+    line-height: 1.75; margin-bottom: 40px;
+    border-left: 1px solid var(--border);
+    padding-left: 20px;
+  }
+
+  /* ── FORM FIELDS ── */
+  .field { margin-bottom: 28px; }
+  label {
+    display: block; font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--gold-dim);
+    margin-bottom: 8px;
+  }
+  input[type="text"], input[type="email"] {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; font-weight: 300;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  input:focus { border-color: var(--gold); }
+  input.error-field { border-color: var(--error); }
+
+  /* ── LIKERT SCALE HEADER ── */
+  .scale-legend {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0; border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: .06em;
+  }
+  .scale-legend .labels {
+    display: flex; gap: 0;
+  }
+  .scale-label-num {
+    width: 38px; text-align: center; font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-block {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+    transition: background .2s;
+  }
+  .question-block:last-of-type { border-bottom: none; }
+
+  .q-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .q-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; color: var(--gold-dim);
+    width: 22px; flex-shrink: 0; text-align: right;
+  }
+  .q-text {
+    flex: 1; font-size: 14px; color: var(--text); line-height: 1.55;
+  }
+  .q-options {
+    display: flex; gap: 4px; flex-shrink: 0;
+  }
+
+  /* radio buttons as tiles */
+  .q-options input[type="radio"] { display: none; }
+  .q-options label {
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 400;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 0;
+    text-transform: none;
+    margin-bottom: 0;
+  }
+  .q-options input[type="radio"]:checked + label {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--black);
+    font-weight: 500;
+  }
+  .q-options label:hover { border-color: var(--gold-dim); color: var(--text); }
+  .q-unanswered .q-options label { border-color: var(--error); }
+
+  /* ── NAVIGATION BUTTONS ── */
+  .nav-row { display: flex; gap: 12px; margin-top: 48px; align-items: center; }
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+    padding: 14px 32px; border-radius: var(--radius);
+    cursor: pointer; border: none; transition: all .2s;
+  }
+  .btn-primary {
+    background: var(--gold); color: var(--black); font-weight: 500;
+  }
+  .btn-primary:hover { background: #d4b060; }
+  .btn-secondary {
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
+
+  .error-msg {
+    font-size: 12px; color: var(--error); margin-top: 6px;
+    display: none;
+  }
+
+  /* ── RESULTS PAGE ── */
+  .result-hero {
+    text-align: center; padding: 40px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .result-hero .respondent-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-style: italic;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .result-hero .result-label {
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .dimension-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .dimension-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; bottom: 0;
+    width: 3px; background: var(--gold);
+  }
+  .dim-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .dim-name {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .dim-score-wrap { text-align: right; }
+  .dim-score {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; font-weight: 300; color: var(--text);
+    line-height: 1;
+  }
+  .dim-score-max { font-size: 12px; color: var(--muted); }
+  .dim-avg { font-size: 12px; color: var(--muted); }
+
+  /* bar */
+  .dim-bar-track {
+    height: 3px; background: var(--border); border-radius: 2px;
+    margin: 14px 0 10px;
+  }
+  .dim-bar-fill {
+    height: 3px; background: var(--gold); border-radius: 2px;
+    transition: width .8s ease;
+  }
+  .dim-poles {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted); font-style: italic;
+  }
+  .dim-interpretation {
+    margin-top: 14px; font-size: 13px; color: var(--muted);
+    line-height: 1.6; border-top: 1px solid var(--border); padding-top: 14px;
+  }
+  .dim-interpretation strong { color: var(--text); font-weight: 400; }
+
+  /* summary total */
+  .total-box {
+    background: var(--gold-glow);
+    border: 1px solid var(--gold-dim);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .total-label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+  .total-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px; font-weight: 300; color: var(--gold);
+    line-height: 1;
+  }
+  .total-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* disclaimer */
+  .disclaimer {
+    font-size: 12px; color: var(--muted); line-height: 1.65;
+    border: 1px solid var(--border); padding: 20px 24px;
+    border-radius: var(--radius); margin-top: 40px;
+  }
+  .disclaimer strong { color: var(--text); font-weight: 400; }
+
+  /* send section */
+  .send-section {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .send-section p {
+    font-size: 13px; color: var(--muted); margin-bottom: 20px;
+    line-height: 1.65;
+  }
+  .send-status {
+    margin-top: 16px; font-size: 13px; display: none;
+    padding: 12px 16px; border-radius: var(--radius);
+  }
+  .send-status.success {
+    background: rgba(100,160,100,.1);
+    border: 1px solid rgba(100,160,100,.3);
+    color: #7ec87e;
+  }
+  .send-status.fail {
+    background: rgba(192,97,74,.1);
+    border: 1px solid rgba(192,97,74,.3);
+    color: var(--error);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { padding: 20px 16px; }
+    main { padding: 40px 16px 60px; }
+    .q-row { flex-wrap: wrap; gap: 12px; }
+    .q-options { flex-wrap: wrap; }
+    .q-options label { width: 34px; height: 34px; font-size: 12px; }
+    .scale-label-num { width: 34px; }
+    .progress-wrap { padding: 0 16px; }
+    .dim-header { flex-direction: column; gap: 8px; }
+    .dim-score-wrap { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">P</div>
+  <div class="logo-text">
+    <strong>Ps. Pablo Carrillo</strong>
+    Servicios Psicológicos
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="step-tab active" id="tab-1">Identificación</div>
+    <div class="step-tab"        id="tab-2">Cuestionario</div>
+    <div class="step-tab"        id="tab-3">Resultados</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ═══════════════════════════════════════ PAGE 1 · IDENTIFICACIÓN -->
+  <div class="page active" id="page-1">
+    <p class="eyebrow">EPT-C · Fundación Aiglé</p>
+    <h1>Estilo Personal<br/><em>del Terapeuta</em></h1>
+    <p class="intro-text">
+      Este cuestionario evalúa las disposiciones habituales que cada terapeuta
+      imprime a su actividad clínica. No existen respuestas correctas ni incorrectas.
+      Responda de manera espontánea y honesta.
+    </p>
+
+    <div class="field">
+      <label for="nombre">Nombre completo</label>
+      <input type="text" id="nombre" placeholder="Ingrese su nombre" autocomplete="name" />
+      <p class="error-msg" id="err-nombre">Por favor ingrese su nombre.</p>
+    </div>
+    <div class="field">
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" placeholder="correo@ejemplo.com" autocomplete="email" />
+      <p class="error-msg" id="err-correo">Por favor ingrese un correo válido.</p>
+    </div>
+    <div class="field">
+      <label for="orientacion">Orientación teórica principal (opcional)</label>
+      <input type="text" id="orientacion" placeholder="Ej: Cognitivo-conductual, Psicoanalítica, Humanista…" />
+    </div>
+    <div class="field">
+      <label for="experiencia">Años de experiencia clínica (opcional)</label>
+      <input type="text" id="experiencia" placeholder="Ej: 5 años" />
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-primary" onclick="goTo2()">Continuar al cuestionario →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ PAGE 2 · CUESTIONARIO -->
+  <div class="page" id="page-2">
+    <p class="eyebrow">36 afirmaciones · Escala 1–7</p>
+    <h1><em>Responda</em> cada afirmación</h1>
+    <p class="intro-text">
+      Seleccione el número que mejor refleja su grado de acuerdo con cada afirmación,
+      donde <strong style="color:var(--text)">1 = Total desacuerdo</strong> y
+      <strong style="color:var(--text)">7 = Total acuerdo</strong>.
+    </p>
+
+    <!-- scale legend -->
+    <div class="scale-legend">
+      <span>Total desacuerdo</span>
+      <div class="labels">
+        <div class="scale-label-num">1</div>
+        <div class="scale-label-num">2</div>
+        <div class="scale-label-num">3</div>
+        <div class="scale-label-num">4</div>
+        <div class="scale-label-num">5</div>
+        <div class="scale-label-num">6</div>
+        <div class="scale-label-num">7</div>
+      </div>
+      <span>Total acuerdo</span>
+    </div>
+
+    <div id="questions-container"></div>
+
+    <p class="error-msg" id="err-questions" style="display:block;margin-top:12px;font-size:13px;">
+      <!-- filled dynamically -->
+    </p>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goTo1()">← Volver</button>
+      <button class="btn btn-primary"   onclick="goTo3()">Ver mis resultados →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ PAGE 3 · RESULTADOS -->
+  <div class="page" id="page-3">
+
+    <div class="result-hero">
+      <p class="result-label">Perfil EPT-C</p>
+      <p class="respondent-name" id="result-name"></p>
+      <p style="font-size:12px;color:var(--muted);margin-top:4px;" id="result-meta"></p>
+    </div>
+
+    <div class="total-box">
+      <div>
+        <p class="total-label">Puntaje total general</p>
+        <p class="total-sub">Suma de los 36 ítems</p>
+      </div>
+      <div style="text-align:right">
+        <p class="total-num" id="total-score">—</p>
+        <p class="total-sub">de 252 puntos</p>
+      </div>
+    </div>
+
+    <div id="dimensions-container"></div>
+
+    <div class="disclaimer">
+      <strong>Nota sobre la interpretación:</strong> El EPT-C evalúa disposiciones autopercibidas
+      mediante continua bipolares. No existen perfiles "correctos" ni "patológicos".
+      Los resultados deben leerse como un mapa de tendencias habituales sujeto a reflexión
+      clínica, supervisión o proceso formativo. El instrumento no cuenta con baremos
+      normativos publicados de acceso universal; la interpretación es ipsativa.
+      Fuente: Fernández-Álvarez et al. (2003); Castañeiras et al. (2008).
+    </div>
+
+    <div class="send-section">
+      <p>
+        Haga clic en el botón para enviar estos resultados al correo del profesional responsable.
+        Se abrirá su cliente de correo con el informe completo listo para enviar.
+      </p>
+      <div class="nav-row" style="margin-top:0">
+        <button class="btn btn-primary" onclick="sendByMailto()">📨 Enviar resultados por correo</button>
+        <button class="btn btn-secondary" onclick="window.print()">Imprimir / Guardar PDF</button>
+      </div>
+      <div class="send-status" id="send-status"></div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════════════════════ */
+
+const QUESTIONS = [
+  "Suelo mantener mi escucha más bien abierta y receptiva más que concentrada y focalizada.",
+  "Procuro que los pacientes se adecuen al formato habitual de mi trabajo.",
+  "Como terapeuta prefiero indicar a los pacientes qué debe hacerse en cada sesión.",
+  "Mantengo un bajo nivel de involucración con los pacientes para actuar con más objetividad.",
+  "Me resultan estimulantes los cambios en el encuadre.",
+  "Las emociones que me despierta el paciente son decisivas para el curso del tratamiento.",
+  "Me siento más inclinado a acompañar al paciente en su exploración que a señalarle los caminos a seguir.",
+  "Evito comunicarme a través de gestos y expresiones muy emotivas.",
+  "Tiendo a exigir cumplimiento estricto con los honorarios.",
+  "Los tratamientos pautados me merecen escasa valoración.",
+  "La expresión de las emociones es un poderoso instrumento de cambio.",
+  "Muchos cambios importantes en el curso de un tratamiento requieren que el terapeuta opere con un bajo tono emocional.",
+  "Fuera de las horas de trabajo dejo de pensar en los pacientes.",
+  "Los cambios de consultorio afectan negativamente los tratamientos.",
+  "Los verdaderos cambios se producen en el curso de sesiones con un clima emocional intenso.",
+  "Me considero un terapeuta que trabaja con un encuadre flexible.",
+  "Me resulta útil revelar algunos de mis aspectos personales en las sesiones.",
+  "Me gusta sentirme sorprendido por el material del paciente sin tener ideas previas.",
+  "Suelo atender pacientes fuera del ámbito del consultorio.",
+  "Las mejores intervenciones en un tratamiento surgen de modo espontáneo.",
+  "Lo que les pasa a mis pacientes tiene poca influencia en mi vida personal.",
+  "En mis intervenciones soy predominantemente directivo.",
+  "Pienso bastante en mi trabajo, aun en mis horas libres.",
+  "Evito revelar a mis pacientes mis estados emotivos.",
+  "Puedo planear un tratamiento en su totalidad desde que se inicia.",
+  "La distancia emocional con los pacientes favorece los procesos de cambio.",
+  "Nunca modifico la duración de las sesiones, a menos que sea imprescindible.",
+  "Si algo me irrita durante una sesión puedo expresarlo.",
+  "Una alta proximidad emocional con los pacientes es imprescindible para promover cambios terapéuticos.",
+  "Prefiero saber de antemano a qué cosas debo prestar atención en las sesiones.",
+  "Prefiero los tratamientos donde están programados todos los pasos a seguir.",
+  "Me interesa trabajar con pacientes que presentan problemas focalizados.",
+  "Procuro dirigir mi atención a la totalidad de lo que pasa en las sesiones.",
+  "Tengo en mente los problemas de los pacientes más allá de las sesiones.",
+  "Soy bastante laxo con los horarios.",
+  "Desde el comienzo de las sesiones me dispongo a dejar flotar mi atención."
+];
+
+/*
+  SCORING KEY — version original 36 ítems
+  Basado en Fernández-Álvarez et al. (2003) y estudios de validación.
+  Los ítems marcados con (I) se invierten antes de sumar (8 - valor).
+
+  ATENCIONAL  → ítems: 1(I), 18(I), 30, 32, 33(I), 36(I)
+  OPERATIVA   → ítems: 3, 7(I), 10(I), 20(I), 22, 25, 31
+  INSTRUCCIONAL → ítems: 2, 5(I), 9, 14, 16(I), 19, 27, 35(I)
+  EXPRESIVA   → ítems: 6, 8(I), 11, 12(I), 15, 17, 24(I), 26(I), 28, 29
+  INVOLUCRACIÓN → ítems: 4(I), 13(I), 21(I), 23, 34
+
+  NOTA: Esta clave de corrección está reconstruida de los estudios disponibles
+  públicamente. Si dispone del protocolo oficial de Fundación Aiglé, verifíquela.
+*/
+
+const DIMENSIONS = [
+  {
+    key: "atencional",
+    name: "Atencional",
+    items: [
+      { idx: 1,  inv: true  },
+      { idx: 18, inv: true  },
+      { idx: 30, inv: false },
+      { idx: 32, inv: false },
+      { idx: 33, inv: true  },
+      { idx: 36, inv: true  }
+    ],
+    poleLow:  "Atención abierta y receptiva",
+    poleHigh: "Atención focalizada y selectiva",
+    interpretLow:  "Escucha global, sin hipótesis previas. Se deja sorprender por el material del paciente. Estilo más frecuente en enfoques humanísticos y psicoanalíticos.",
+    interpretHigh: "Búsqueda activa de información específica. Sabe de antemano qué quiere explorar. Más característico de enfoques cognitivo-conductuales estructurados.",
+    interpretMid:  "Posición intermedia: combina momentos de escucha abierta con atención dirigida según el contexto clínico."
+  },
+  {
+    key: "operativa",
+    name: "Operativa",
+    items: [
+      { idx: 3,  inv: false },
+      { idx: 7,  inv: true  },
+      { idx: 10, inv: true  },
+      { idx: 20, inv: true  },
+      { idx: 22, inv: false },
+      { idx: 25, inv: false },
+      { idx: 31, inv: false }
+    ],
+    poleLow:  "Intervención espontánea",
+    poleHigh: "Intervención pautada y estructurada",
+    interpretLow:  "Preferencia por intervenciones que emergen del momento clínico. El paciente tiene rol protagónico en la dirección del proceso.",
+    interpretHigh: "Preferencia por tratamientos planificados donde los pasos están definidos. El terapeuta dirige activamente. Más frecuente en terapias manualizadas.",
+    interpretMid:  "Posición intermedia: planifica el encuadre general pero permite que el contenido emerja espontáneamente en sesión."
+  },
+  {
+    key: "instruccional",
+    name: "Instruccional",
+    items: [
+      { idx: 2,  inv: false },
+      { idx: 5,  inv: true  },
+      { idx: 9,  inv: false },
+      { idx: 14, inv: false },
+      { idx: 16, inv: true  },
+      { idx: 19, inv: false },
+      { idx: 27, inv: false },
+      { idx: 35, inv: true  }
+    ],
+    poleLow:  "Encuadre flexible",
+    poleHigh: "Encuadre rígido",
+    interpretLow:  "Adapta el encuadre a las necesidades del paciente. Tolera modificaciones en horarios, lugar y condiciones del contrato terapéutico.",
+    interpretHigh: "Mantiene el encuadre de manera estricta. El paciente se adapta al formato del terapeuta.",
+    interpretMid:  "Mantiene límites estructurales básicos pero con capacidad de ajuste ante circunstancias específicas del paciente."
+  },
+  {
+    key: "expresiva",
+    name: "Expresiva",
+    items: [
+      { idx: 6,  inv: false },
+      { idx: 8,  inv: true  },
+      { idx: 11, inv: false },
+      { idx: 12, inv: true  },
+      { idx: 15, inv: false },
+      { idx: 17, inv: false },
+      { idx: 24, inv: true  },
+      { idx: 26, inv: true  },
+      { idx: 28, inv: false },
+      { idx: 29, inv: false }
+    ],
+    poleLow:  "Distancia emocional / formalidad",
+    poleHigh: "Proximidad emocional / expresividad",
+    interpretLow:  "Presencia contenida emocionalmente. Evita gestos muy emotivos. Privilegia la neutralidad como herramienta clínica. Más frecuente en enfoques psicoanalíticos clásicos.",
+    interpretHigh: "Alta expresividad emocional. Usa las autorrevelaciones como recurso psicoterapéutico. Establece comunicación emocionalmente cercana. Más frecuente en enfoques humanísticos e integrativos.",
+    interpretMid:  "Equilibrio entre contención y presencia emocional. Utiliza la expresividad de modo selectivo según el momento clínico."
+  },
+  {
+    key: "involucracion",
+    name: "Involucración",
+    items: [
+      { idx: 4,  inv: true  },
+      { idx: 13, inv: true  },
+      { idx: 21, inv: true  },
+      { idx: 23, inv: false },
+      { idx: 34, inv: false }
+    ],
+    poleLow:  "Baja involucración",
+    poleHigh: "Alta involucración",
+    interpretLow:  "Separación clara entre vida profesional y personal. Desconecta con facilidad entre sesiones. Puede asociarse con mayor protección frente al desgaste profesional.",
+    interpretHigh: "Alto compromiso que impacta la vida personal del terapeuta. Piensa en sus pacientes fuera del horario clínico. Requiere atención al autocuidado y riesgo de burnout.",
+    interpretMid:  "Nivel de compromiso moderado: implicación genuina con los pacientes sin que esto invada significativamente la vida personal."
+  }
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+   RENDER QUESTIONS
+═══════════════════════════════════════════════════════════════════ */
+function renderQuestions() {
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  QUESTIONS.forEach((text, i) => {
+    const num = i + 1;
+    const block = document.createElement('div');
+    block.className = 'question-block';
+    block.id = `qblock-${num}`;
+
+    let opts = '';
+    for (let v = 1; v <= 7; v++) {
+      opts += `
+        <input type="radio" name="q${num}" id="q${num}v${v}" value="${v}" />
+        <label for="q${num}v${v}">${v}</label>`;
+    }
+
+    block.innerHTML = `
+      <div class="q-row">
+        <span class="q-num">${String(num).padStart(2,'0')}</span>
+        <span class="q-text">${text}</span>
+        <div class="q-options">${opts}</div>
+      </div>`;
+    container.appendChild(block);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════════════════ */
+function showPage(n) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${n}`).classList.add('active');
+  document.querySelectorAll('.step-tab').forEach((t, i) => {
+    t.classList.remove('active','done');
+    if (i + 1 === n) t.classList.add('active');
+    if (i + 1 < n)  t.classList.add('done');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goTo1() { showPage(1); }
+
+function goTo2() {
+  const nombre = document.getElementById('nombre').value.trim();
+  const correo = document.getElementById('correo').value.trim();
+  let ok = true;
+
+  const errN = document.getElementById('err-nombre');
+  const errC = document.getElementById('err-correo');
+  const inN  = document.getElementById('nombre');
+  const inC  = document.getElementById('correo');
+
+  if (!nombre) {
+    errN.style.display = 'block'; inN.classList.add('error-field'); ok = false;
+  } else {
+    errN.style.display = 'none'; inN.classList.remove('error-field');
+  }
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!correo || !emailRe.test(correo)) {
+    errC.style.display = 'block'; inC.classList.add('error-field'); ok = false;
+  } else {
+    errC.style.display = 'none'; inC.classList.remove('error-field');
+  }
+
+  if (ok) showPage(2);
+}
+
+function goTo3() {
+  // validate all answered
+  const unanswered = [];
+  for (let i = 1; i <= 36; i++) {
+    const val = document.querySelector(`input[name="q${i}"]:checked`);
+    if (!val) unanswered.push(i);
+  }
+
+  const errQ = document.getElementById('err-questions');
+  if (unanswered.length > 0) {
+    // highlight unanswered
+    document.querySelectorAll('.question-block').forEach(b => b.classList.remove('q-unanswered'));
+    unanswered.forEach(n => document.getElementById(`qblock-${n}`).classList.add('q-unanswered'));
+    errQ.textContent = `Faltan ${unanswered.length} pregunta(s) sin responder: ${unanswered.map(n => '#'+String(n).padStart(2,'0')).join(', ')}`;
+    errQ.style.display = 'block';
+    // scroll to first unanswered
+    document.getElementById(`qblock-${unanswered[0]}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  errQ.style.display = 'none';
+  document.querySelectorAll('.question-block').forEach(b => b.classList.remove('q-unanswered'));
+
+  buildResults();
+  showPage(3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCORING
+═══════════════════════════════════════════════════════════════════ */
+function getScore(idx, inv) {
+  const val = parseInt(document.querySelector(`input[name="q${idx}"]:checked`).value);
+  return inv ? (8 - val) : val;
+}
+
+function interpret(avg, dim) {
+  if (avg < 3.0)  return dim.interpretLow;
+  if (avg > 5.0)  return dim.interpretHigh;
+  return dim.interpretMid;
+}
+
+function buildResults() {
+  const nombre      = document.getElementById('nombre').value.trim();
+  const orientacion = document.getElementById('orientacion').value.trim();
+  const experiencia = document.getElementById('experiencia').value.trim();
+
+  document.getElementById('result-name').textContent = nombre;
+  let meta = [];
+  if (orientacion) meta.push(orientacion);
+  if (experiencia) meta.push(experiencia + ' de experiencia');
+  document.getElementById('result-meta').textContent = meta.join(' · ');
+
+  // raw answers for email
+  window._rawAnswers = {};
+  for (let i = 1; i <= 36; i++) {
+    window._rawAnswers[i] = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+  }
+
+  let totalScore = 0;
+  const container = document.getElementById('dimensions-container');
+  container.innerHTML = '';
+
+  DIMENSIONS.forEach(dim => {
+    let sum = 0;
+    dim.items.forEach(item => { sum += getScore(item.idx, item.inv); });
+    const max = dim.items.length * 7;
+    const avg = sum / dim.items.length;
+    const pct = (sum / max) * 100;
+
+    // total uses raw sum
+    let rawSum = 0;
+    dim.items.forEach(item => {
+      rawSum += parseInt(document.querySelector(`input[name="q${item.idx}"]:checked`).value);
+    });
+    totalScore += rawSum;
+
+    const card = document.createElement('div');
+    card.className = 'dimension-card';
+    card.innerHTML = `
+      <div class="dim-header">
+        <div>
+          <p class="dim-name">${dim.name}</p>
+          <p class="dim-avg">Promedio: ${avg.toFixed(2)} / 7 &nbsp;·&nbsp; ${dim.items.length} ítems</p>
+        </div>
+        <div class="dim-score-wrap">
+          <span class="dim-score">${sum}</span>
+          <span class="dim-score-max"> / ${max}</span>
+        </div>
+      </div>
+      <div class="dim-bar-track"><div class="dim-bar-fill" style="width:0%" data-pct="${pct.toFixed(1)}"></div></div>
+      <div class="dim-poles">
+        <span>◂ ${dim.poleLow}</span>
+        <span>${dim.poleHigh} ▸</span>
+      </div>
+      <div class="dim-interpretation">${interpret(avg, dim)}</div>
+    `;
+    container.appendChild(card);
+  });
+
+  document.getElementById('total-score').textContent = totalScore;
+
+  // animate bars after paint
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.querySelectorAll('.dim-bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.pct + '%';
+      });
+    }, 100);
+  });
+
+  // store for email
+  window._resultData = { nombre, orientacion, experiencia, totalScore };
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   EMAIL VIA MAILTO
+   Opens the user's default mail client with the full report
+═══════════════════════════════════════════════════════════════════ */
+function sendByMailto() {
+  const d  = window._resultData;
+  const ra = window._rawAnswers;
+  if (!d) return;
+
+  const dimResults = DIMENSIONS.map(dim => {
+    let sum = 0;
+    dim.items.forEach(item => { sum += getScore(item.idx, item.inv); });
+    const avg = (sum / dim.items.length).toFixed(2);
+    const max = dim.items.length * 7;
+    return `${dim.name}: ${sum}/${max} (promedio ${avg}/7)`;
+  });
+
+  let rawLines = '';
+  for (let i = 1; i <= 36; i++) {
+    rawLines += `  Ítem ${String(i).padStart(2,'0')}: ${ra[i]}\n`;
+  }
+
+  const body = `RESULTADOS EPT-C — ESTILO PERSONAL DEL TERAPEUTA
+==========================================
+
+Fecha: ${new Date().toLocaleDateString('es-CL', {day:'2-digit',month:'long',year:'numeric'})}
+Hora:  ${new Date().toLocaleTimeString('es-CL')}
+
+DATOS DEL EVALUADO
+------------------
+Nombre:             ${d.nombre}
+Correo:             ${document.getElementById('correo').value.trim()}
+Orientación teórica: ${d.orientacion || '(no indicado)'}
+Años de experiencia: ${d.experiencia || '(no indicado)'}
+
+PUNTAJE TOTAL GENERAL: ${d.totalScore} / 252
+
+RESULTADOS POR DIMENSIÓN (puntaje corregido)
+--------------------------------------------
+${dimResults.join('\n')}
+
+RESPUESTAS ORIGINALES (sin inversión)
+--------------------------------------
+${rawLines}
+--
+Enviado desde el cuestionario EPT-C
+Ps. Pablo Carrillo · pspablocarrillo.com`;
+
+  const subject = encodeURIComponent(`EPT-C · Resultados de ${d.nombre}`);
+  const bodyEnc = encodeURIComponent(body);
+  const mailto  = `mailto:pablo.carrillo@uach.cl?subject=${subject}&body=${bodyEnc}`;
+
+  window.location.href = mailto;
+
+  const status = document.getElementById('send-status');
+  status.className = 'send-status success';
+  status.style.display = 'block';
+  status.textContent = '✓ Se abrió su cliente de correo con el informe listo para enviar.';
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════════ */
+renderQuestions();
+</script>
+</body>
+</html>
