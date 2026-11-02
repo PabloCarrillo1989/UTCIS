@@ -1,0 +1,821 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Protocolos CCC UACh</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: tema claro fijo. Cabecera con buscador y cuatro tarjetas de categoría que filtran;
+   franja de urgencias; tarjetas-botón por grupo; el resumen se abre como hoja de lectura. */
+:root{
+  color-scheme:light;
+  --paper:#F5F8F7; --card:#FFFFFF; --ink:#1F2D33; --muted:#5A6B71; --line:#DCE4E2; --soft:#EEF3F2;
+  --ur:#C2533B; --ur-bg:#FCEEEA; --cl:#2D6CA2; --cl-bg:#EAF2FA;
+  --in:#4C8636; --in-bg:#EBF5E5; --ge:#7A58A8; --ge-bg:#F2EDF9;
+  --ok:#2E7D50; --okbg:#E6F4EC; --warn:#A5690F; --warnbg:#FDF3E1; --crit:#B83B2F; --critbg:#FBE7E4;
+  --shade:rgba(25,40,45,.42);
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16.5px;line-height:1.6}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--cl);outline-offset:2px}
+
+header.top{background:var(--card);border-bottom:1px solid var(--line)}
+header.top .wrap{padding-block:40px 28px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(34px,5.6vw,54px);line-height:1.02;margin:12px 0 10px;letter-spacing:-.02em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--cl)}
+.lede{max-width:60ch;color:var(--muted);margin:0;font-size:17.5px}
+.search{display:block;position:relative;margin-top:24px;max-width:640px}
+.search input{width:100%;font:inherit;font-size:17px;padding:14px 16px 14px 46px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink)}
+.search input:focus{border-color:var(--cl);background:var(--card);outline:none;box-shadow:0 0 0 4px var(--cl-bg)}
+.search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted)}
+
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+@media (max-width:860px){.cats{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.cats{grid-template-columns:1fr}}
+.cat{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:14px;background:var(--bg);border:2px solid transparent;transition:border-color .15s,transform .15s;min-width:0}
+.cat:hover{transform:translateY(-1px)}
+.cat[aria-pressed="true"]{border-color:var(--c);background:var(--card);box-shadow:0 0 0 4px var(--bg)}
+.cat:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+.ico{flex:none;width:40px;height:40px;border-radius:11px;background:var(--c);color:#fff;display:grid;place-items:center}
+.cat b{display:block;font-family:var(--f-display);font-weight:600;font-size:16.5px;line-height:1.2;color:var(--ink)}
+.cat small{display:block;font-size:13.5px;color:var(--muted);line-height:1.35;margin-top:3px}
+.cat .ct{font-family:var(--f-mono);font-size:12px;color:var(--c)}
+.reset{all:unset;cursor:pointer;font-size:14px;color:var(--cl);font-weight:700;margin-top:12px;display:inline-block}
+.reset[hidden]{display:none}
+
+.alertbar{background:var(--ur-bg);border-bottom:1px solid #F2D5CD}
+.alertbar .wrap{padding-block:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.alertbar .lab{font-weight:700;color:var(--ur);margin-right:4px;display:flex;align-items:center;gap:8px}
+.alertbar button{all:unset;cursor:pointer;font-size:15px;font-weight:700;padding:8px 14px;border-radius:999px;background:var(--card);color:var(--ur);border:1.5px solid #EDC3B8}
+.alertbar button:hover{background:var(--ur);color:#fff;border-color:var(--ur)}
+.alertbar button:focus-visible{outline:3px solid var(--ur);outline-offset:2px}
+
+main .wrap{padding-block:12px 64px}
+section.grp{margin-top:40px}
+.grp-h{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.grp-h .ico{width:46px;height:46px;border-radius:13px}
+.grp-h h2{font-family:var(--f-display);font-weight:800;font-size:25px;margin:0;line-height:1.1}
+.grp-h p{margin:2px 0 0;color:var(--muted);font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.pcard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:8px;padding:18px 18px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s;min-width:0;position:relative;overflow:hidden}
+.pcard::before{content:"";position:absolute;inset:0 0 auto;height:5px;background:var(--c)}
+.pcard:hover{transform:translateY(-3px);box-shadow:0 12px 28px -16px rgba(30,50,60,.45);border-color:var(--c)}
+.pcard:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+.pcard .code{font-family:var(--f-mono);font-size:12px;color:var(--c);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pcard .u{font-family:var(--f-body);font-size:12px;font-weight:700;color:var(--ur);background:var(--ur-bg);padding:2px 8px;border-radius:999px}
+.pcard h3{font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.18;margin:0;text-wrap:balance}
+.pcard p{margin:0;color:var(--muted);font-size:15px;line-height:1.45}
+.pcard .go{margin-top:auto;padding-top:8px;font-size:14px;font-weight:700;color:var(--c)}
+.empty{color:var(--muted);padding:36px 0;font-size:17px}
+footer.foot{border-top:1px solid var(--line);background:var(--card)}
+footer.foot .wrap{padding-block:22px 32px;color:var(--muted);font-size:14px}
+
+/* Hoja de lectura */
+.sheet-bg{position:fixed;inset:0;background:var(--shade);z-index:20;display:flex;justify-content:center;align-items:flex-start;overflow-y:auto;padding:max(28px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(28px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.sheet{background:var(--card);width:100%;max-width:820px;border-radius:18px;box-shadow:0 30px 80px -30px rgba(0,0,0,.45);animation:rise .22s ease-out;overflow:hidden}
+@keyframes rise{from{transform:translateY(14px);opacity:.6}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet,.pcard,.cat{animation:none;transition:none}}
+.sh-top{background:var(--bg);padding:24px 26px 22px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.sh-top .row{display:flex;gap:14px;align-items:flex-start;min-width:0}
+.sh-top .ico{width:48px;height:48px;border-radius:14px}
+.sh-top .code{font-family:var(--f-mono);font-size:12.5px;color:var(--c)}
+.sh-top h2{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4.4vw,36px);line-height:1.05;margin:4px 0 0;letter-spacing:-.01em;text-wrap:balance}
+.x{all:unset;cursor:pointer;flex:none;width:42px;height:42px;border-radius:12px;background:var(--card);display:grid;place-items:center;font-size:24px;color:var(--ink)}
+.x:focus-visible{outline:3px solid var(--c)}
+.sh-body{padding:22px 26px 26px;display:grid;gap:24px}
+@media (max-width:520px){.sh-top{padding:20px 18px}.sh-body{padding:18px 18px 22px}}
+.purpose{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.purpose{grid-template-columns:1fr}}
+.box{background:var(--soft);border-radius:12px;padding:14px 16px;min-width:0}
+.box.para{background:var(--bg)}
+.lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.box.para .lbl{color:var(--c)}
+.box p{margin:0}
+h4.sec{font-family:var(--f-display);font-weight:800;font-size:20px;margin:0 0 14px;display:flex;align-items:center;gap:12px}
+h4.sec::after{content:"";flex:1;height:2px;border-radius:2px;background:var(--soft)}
+.vtitle{font-weight:700;font-size:15px;margin:0 0 10px;color:var(--c)}
+
+ol.flow{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;gap:8px}
+ol.flow li{counter-increment:s;position:relative;padding-left:44px;min-width:0}
+ol.flow li::before{content:counter(s);position:absolute;left:0;top:8px;width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;font-family:var(--f-mono);font-size:13px;display:grid;place-items:center;z-index:1}
+ol.flow li:not(:last-child)::after{content:"";position:absolute;left:14.5px;top:38px;bottom:-14px;width:2px;background:var(--bg)}
+ol.flow li .t{display:block;background:var(--soft);border-radius:10px;padding:10px 14px}
+ol.flow li.decision::before{border-radius:6px;transform:rotate(45deg) scale(.86)}
+ol.flow li.decision .t{background:var(--bg);font-weight:700}
+ol.flow li.alert .t{background:var(--warnbg);box-shadow:inset 3px 0 0 var(--warn)}
+ol.flow li.end::before{background:var(--card);color:var(--c);box-shadow:inset 0 0 0 2.5px var(--c)}
+.lanes{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:640px){.lanes{grid-template-columns:1fr}}
+.lane{border:1.5px solid var(--soft);border-radius:14px;padding:14px;min-width:0}
+.multi{display:grid;gap:18px}
+.multi.two{grid-template-columns:1fr 1fr}
+@media (max-width:640px){.multi.two{grid-template-columns:1fr}}
+
+ol.tl{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ol.tl li{display:grid;grid-template-columns:128px 1fr;gap:12px;align-items:start}
+ol.tl .at{font-family:var(--f-mono);font-size:12.5px;color:var(--c);background:var(--bg);border-radius:8px;padding:9px 8px;text-align:center;font-variant-numeric:tabular-nums}
+ol.tl .t{background:var(--soft);border-radius:10px;padding:8px 14px;min-width:0}
+@media (max-width:480px){ol.tl li{grid-template-columns:1fr;gap:4px}ol.tl .at{justify-self:start;padding:4px 10px}}
+
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:640px){.tiers{grid-template-columns:1fr}}
+.tier{border-radius:12px;padding:14px 16px;min-width:0}
+.tier h5{margin:0 0 6px;font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+.tier h5 i{width:11px;height:11px;border-radius:50%;background:currentColor}
+.tier ul{margin:0;padding-left:18px;font-size:15px}
+.t0{background:var(--okbg)}.t0 h5{color:var(--ok)}
+.t1{background:var(--warnbg)}.t1 h5{color:var(--warn)}
+.t2{background:var(--critbg)}.t2 h5{color:var(--crit)}
+
+.phases{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:10px;counter-reset:ph}
+@media (max-width:640px){.phases{grid-auto-flow:row}}
+.ph{background:var(--bg);border-radius:12px;padding:14px 16px;min-width:0;border-top:4px solid color-mix(in srgb,var(--c) calc(35% + var(--i)*20%),transparent)}
+.ph b{display:block;font-family:var(--f-display);font-weight:600;font-size:16.5px;margin-bottom:4px}
+.ph span{font-size:15px}
+
+dl.claves{display:grid;grid-template-columns:minmax(130px,max-content) 1fr;margin:0;border-radius:12px;overflow:hidden;border:1.5px solid var(--soft)}
+dl.claves dt,dl.claves dd{padding:10px 14px;margin:0;border-top:1.5px solid var(--soft);min-width:0}
+dl.claves dt:first-of-type,dl.claves dt:first-of-type+dd{border-top:0}
+dl.claves dt{font-weight:700;font-size:15px;background:var(--soft)}
+dl.claves dd{font-variant-numeric:tabular-nums}
+@media (max-width:480px){dl.claves{grid-template-columns:1fr}dl.claves dd{border-top:0;padding-top:0;background:var(--soft)}dl.claves dt{padding-bottom:2px}}
+.ojo{display:flex;gap:12px;background:var(--warnbg);border-radius:12px;padding:14px 16px}
+.ojo svg{flex:none;color:var(--warn);margin-top:3px}
+.ojo p{margin:0}
+.rel{display:flex;flex-wrap:wrap;gap:8px}
+.rel button{all:unset;cursor:pointer;font-size:14.5px;font-weight:700;padding:8px 14px;border-radius:999px;background:var(--rb);color:var(--rc)}
+.rel button:hover{box-shadow:inset 0 0 0 1.5px var(--rc)}
+.rel button:focus-visible{outline:3px solid var(--rc)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;color:var(--muted);border-top:1.5px solid var(--soft);padding-top:14px}
+.meta a{color:var(--c);font-weight:700}
+.nav{display:flex;justify-content:space-between;gap:10px;padding:0 26px 24px}
+@media (max-width:520px){.nav{padding:0 18px 20px}}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;font-size:14.5px;padding:10px 14px;border-radius:10px;background:var(--soft);max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn:hover{background:var(--line)}
+.btn:focus-visible{outline:3px solid var(--cl)}
+.btn[disabled]{opacity:.35;cursor:default;background:var(--soft)}
+body.lock{overflow:hidden}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">Centro Clínico y Comunitario UACh · Sede Puerto Montt · Versión 2026</div>
+    <h1>Protocolos <em>del CCC</em></h1>
+    <p class="lede">Lo esencial de cada protocolo en una sola vista: para qué sirve y qué hay que hacer. Elige un grupo o busca por palabra.</p>
+    <label class="search" for="q">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.7"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Buscar: crisis, SISTRAT, intérprete, 15 días…" autocomplete="off" aria-label="Buscar protocolo">
+    </label>
+    <div class="cats" id="cats" role="group" aria-label="Filtrar por grupo"></div>
+    <button class="reset" id="reset" type="button" hidden>Ver todos los protocolos</button>
+  </div>
+</header>
+<div class="alertbar"><div class="wrap" id="urgent">
+  <span class="lab"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5l8 14H2l8-14z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 8v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14.3" r="1.1" fill="currentColor"/></svg>¿Es una urgencia?</span>
+</div></div>
+<main><div class="wrap" id="groups"></div></main>
+<footer class="foot"><div class="wrap">Resúmenes elaborados a partir de los protocolos institucionales 2026 · Actualizado noviembre 2026. Ante cualquier duda, prima el documento completo aprobado por Dirección.</div></footer>
+<div id="sheetRoot"></div>
+<script>
+const CATS = {
+  ur: { name: "Urgencias y riesgo", hint: "Para actuar ante situaciones que no pueden esperar." },
+  cl: { name: "Procedimientos clínicos", hint: "Cómo se hacen las prestaciones del tratamiento." },
+  in: { name: "Inclusión y trato", hint: "Ajustes de atención según quién es la persona." },
+  ge: { name: "Gestión, registro y derechos", hint: "Ficha, datos, información, reclamos y satisfacción." }
+};
+
+const D = "https://drive.google.com/file/d/";
+
+const P = [
+/* ───────────── URGENCIAS Y RIESGO ───────────── */
+{
+  id: "ur-01", cat: "ur", code: "UR-01", title: "Manejo de crisis", urgent: true,
+  brief: "Respuesta del equipo cuando una persona usuaria se descompensa, en el Centro o en su casa.",
+  autor: "Vanessa Velásquez", vig: "2026-2027", src: D + "1TR6Tv2QYihMYfcvT6FxrMwtT9BXvoKRE/view",
+  para: "Coordinar la respuesta del equipo, la familia y los servicios de urgencia cuando la estabilidad clínica, la seguridad o el proceso terapéutico de una persona usuaria se ven comprometidos.",
+  cuando: "Se considera crisis: retorno al consumo tras abstinencia, aumento del consumo, descompensación asociada a fármacos, asistir a sesión bajo efectos, o ideación/intento suicida (en este último caso, usar el Protocolo de Prevención del Suicidio).",
+  viz: [{ type: "lanes", lanes: [
+    { title: "Crisis en el Centro", steps: [
+      { t: "Actualizar antecedentes en la carpeta digital y la ficha de sesión." },
+      { t: "Contener y escuchar a la persona y, si corresponde, a su familia." },
+      { t: "Aplicar medidas farmacológicas indicadas por psiquiatra. Sin indicación escrita: llamar al psiquiatra tratante.", k: "alert" },
+      { t: "Avisar al familiar responsable o adulto significativo." },
+      { t: "Si es necesario, acompañar a urgencia hospitalaria o SAPU.", k: "end" }
+    ]},
+    { title: "Crisis en el hogar", steps: [
+      { t: "La familia avisa al equipo y recibe orientación." },
+      { t: "Quien recibe el aviso informa al equipo y gestiona hora con psiquiatra." },
+      { t: "Aumentar atenciones durante la 1ª y 2ª semana." },
+      { t: "Visitas domiciliarias, preferentemente en dupla." },
+      { t: "Superada la crisis, abordarla en sesiones posteriores.", k: "end" }
+    ]}
+  ]}],
+  resp: "Profesional que recibe la situación, equipo tratante, psiquiatra, familia o red de apoyo.",
+  ojo: "Mantener al día la carpeta digital: en una crisis el equipo decide con lo que está registrado."
+},
+{
+  id: "ur-02", cat: "ur", code: "UR-02", title: "Prevención del suicidio", urgent: true,
+  brief: "Detectar, clasificar y derivar el riesgo suicida. Incluye teléfonos de urgencia.",
+  autor: "Pablo Carrillo", vig: "2026-2027", src: D + "1Wg-YzV3VPHhCk-A-JWML9XxBUQp0OabT/view",
+  para: "Detectar a tiempo la ideación y conducta suicida, manejar el riesgo inminente y derivar de forma segura. El Centro no reemplaza la urgencia psiquiátrica.",
+  cuando: "Tamizaje en la primera evaluación, ante desesperanza o ideación, tras recaída, crisis, pérdida, alta hospitalaria o intento, y cada 3 meses en seguimiento estable.",
+  viz: [
+    { type: "flow", steps: [
+      { t: "Tamizaje: PHQ-9 (atención al ítem 9) o pregunta directa." },
+      { t: "Si es positivo: evaluación ampliada con C-SSRS (versión adultos) o entrevista estructurada.", k: "decision" },
+      { t: "Clasificar el riesgo y actuar según el nivel (abajo)." },
+      { t: "Seguimiento activo a las 48 h, 7 días y 30 días. Registrar cada contacto.", k: "end" }
+    ]},
+    { type: "tiers", tiers: [
+      { lvl: "Bajo", items: ["Plan de apoyo", "Entregar línea *4141", "Seguimiento en 48–72 h"] },
+      { lvl: "Moderado", items: ["Plan de seguridad escrito", "Reducir acceso a medios", "Cita prioritaria en 24–72 h", "Contactar red de apoyo"] },
+      { lvl: "Alto / inminente", items: ["No dejar sola a la persona", "Retirar medios letales", "Derivar a Urgencia HBPM o SAPU", "Traslado con 2 profesionales", "Notificar a la familia"] }
+    ]}
+  ],
+  claves: [
+    ["Urgencia HBPM", "600 360 0196"], ["SAPU Padre Hurtado", "(65) 221 3613"],
+    ["SAPU Carmela Carvajal", "(65) 226 1252"], ["SAPU Angelmó", "(65) 226 1101"],
+    ["Ambulancia", "131"], ["Prevención del suicidio", "*4141"]
+  ],
+  resp: "Profesional de turno evalúa; coordinador supervisa la derivación segura.",
+  ojo: "Con intoxicación, priorizar estabilización y traslado: la intención no se puede evaluar bien hasta que la persona esté sobria. En riesgo inminente se notifica a la familia aun sin consentimiento, documentándolo."
+},
+{
+  id: "ur-03", cat: "ur", code: "UR-03", title: "Posvención del suicidio", urgent: true,
+  brief: "Qué hacer si una persona usuaria fallece por suicidio: familia, comunidad y equipo.",
+  autor: "Pablo Carrillo", vig: "12 meses desde marzo 2026", src: D + "1rDMwUxCw5WJEG-i2qHBHb2jFb5rPjRaz/view",
+  para: "Ordenar una respuesta ética y respetuosa ante el fallecimiento por suicidio de una persona usuaria, protegiendo a la familia, a la comunidad cercana y al equipo.",
+  cuando: "Al recibir la noticia del fallecimiento de una persona usuaria por suicidio.",
+  viz: [{ type: "timeline", steps: [
+    { at: "De inmediato", t: "Quien recibe la noticia avisa a la Directora y al equipo." },
+    { at: "≤ 24 h", t: "Confirmar la información." },
+    { at: "≤ 48 h", t: "Reunión clínica: quién contacta a la familia, cómo se informa a la comunidad (sin detalles del hecho) y notificación a SENDA." },
+    { at: "≤ 7 días", t: "Reorganizar la agenda: contención y evaluación de riesgo suicida en familiares. Entregar *4141 y Salud Responde." },
+    { at: "Tras el funeral", t: "Jornada reflexiva del equipo (dentro de 7 días). Flexibilidad laboral y apoyo vía Bienestar UACh si se requiere." },
+    { at: "Al cerrar", t: "Informe de experiencia con acciones y aprendizajes." }
+  ]}],
+  claves: [["Prevención del suicidio", "*4141"], ["Salud Responde", "600 360 7777"], ["SAMU", "131"], ["Carabineros", "133"]],
+  resp: "Directora convoca y coordina; profesional con vínculo terapéutico hace el acercamiento a la familia.",
+  ojo: "No entregar detalles del hecho ni emitir juicios. Registrar todo en ficha clínica y acta de reunión."
+},
+{
+  id: "ur-04", cat: "ur", code: "UR-04", title: "Atención médica", urgent: true,
+  brief: "Controles médicos programados y qué hacer ante una urgencia médica.",
+  autor: "Vanessa Velásquez", vig: "2026-2027", src: D + "14ojsxIzNpyt3Psm8rYs2GQP9SZajDCL-/view",
+  para: "Garantizar acceso oportuno a atención médica ambulatoria y de urgencia a personas mayores de 18 años en tratamiento. El Centro no tiene servicio de urgencia propio.",
+  cuando: "Controles médicos del plan de tratamiento, solicitudes sin hora y cualquier situación con riesgo vital (convulsiones, sobredosis, ideación suicida con plan).",
+  viz: [{ type: "lanes", lanes: [
+    { title: "Atención ambulatoria", steps: [
+      { t: "Agendar control: cada 15 días, mensual o bimestral, según acuerde el equipo." },
+      { t: "Primera consulta 60 min; controles 30 min." },
+      { t: "Registrar en ficha y compartir lo pertinente con el equipo." },
+      { t: "Sin hora: buscar cupo el mismo día o el más cercano; si no hay, orientar a su centro de salud o SAPU.", k: "end" }
+    ]},
+    { title: "Urgencia", steps: [
+      { t: "Identificar si hay riesgo vital o se requiere evaluación inmediata.", k: "decision" },
+      { t: "El primer profesional que atiende llama al SAMU 131 o gestiona traslado a la urgencia más cercana.", k: "alert" },
+      { t: "Informar al responsable clínico y, si corresponde, al familiar autorizado.", k: "end" }
+    ]}
+  ]}],
+  claves: [["SAMU", "131"]],
+  resp: "Profesional médica, equipo de tratamiento y primer profesional que detecta la urgencia.",
+  ojo: "La médica participa en las reuniones clínicas ampliadas."
+},
+{
+  id: "ur-05", cat: "ur", code: "UR-05", title: "Desintoxicación domiciliaria",
+  brief: "Estrategia excepcional de 12–15 días en el domicilio, con supervisión médica y de la red.",
+  autor: "Carla Cárdenas", vig: "2026-2027", src: D + "1YoaPAGlWPEl_zBZKsdXzHHc_IZPRsPBx/view",
+  para: "Interrumpir el consumo en el domicilio de forma segura, cuando las estrategias ambulatorias no han dado resultado, con indicación psiquiátrica y apoyo de la red familiar.",
+  cuando: "Incluye: abstinencia manejable en casa, riesgo suicida bajo, red comprometida, aceptación voluntaria. Excluye: abstinencia de alto riesgo, ideación suicida activa, comorbilidad descompensada, violencia intrafamiliar o red inexistente.",
+  viz: [{ type: "phases", phases: [
+    { h: "1 · Evaluación", d: "Reunión clínica, criterios, evaluación psiquiátrica, entrevista con usuario y red, firma de acuerdos." },
+    { h: "2 · Inicio", d: "Fármacos y restricciones: domicilio, no consumo, sin celular, red supervisa fármacos." },
+    { h: "3 · Seguimiento 12–15 días", d: "Contacto remoto al inicio, visitas día por medio, monitoreo de síntomas, test de drogas, registro." },
+    { h: "4 · Cierre", d: "Control psiquiátrico, sesión de cierre con red y equipo, continuidad del tratamiento." }
+  ]}],
+  resp: "Psiquiatra indica y controla; Trabajo Social orienta a la red; TENS supervisa fármacos y aplica test; equipo decide en reunión clínica.",
+  ojo: "Evaluar riesgo suicida antes de iniciar. Entregar números de emergencia y psicoeducar a la red sobre síntomas de abstinencia. Un incumplimiento grave puede llevar al alta administrativa."
+},
+
+/* ───────────── PROCEDIMIENTOS CLÍNICOS ───────────── */
+{
+  id: "cl-01", cat: "cl", code: "CL-01", title: "Aplicación de test de drogas",
+  brief: "Toma de muestra de orina supervisada y registro del resultado.",
+  autor: "Vanessa Velásquez", vig: "2026-2027", src: D + "11KsNSLe6fk3tTYmasx9368wdigu_uvoz/view",
+  para: "Obtener información objetiva sobre abstinencia o consumo reciente, como apoyo clínico y motivacional del tratamiento.",
+  cuando: "Cuando el psiquiatra o el equipo tratante indica el test.",
+  viz: [{ type: "flow", steps: [
+    { t: "Informar a la persona y firmar consentimiento informado." },
+    { t: "Entregar frasco estéril y supervisar la toma de muestra." },
+    { t: "Observar color y temperatura de la orina; registrar irregularidades.", k: "alert" },
+    { t: "Verificar integridad y vigencia del test." },
+    { t: "Introducir el test frente a la persona y esperar ~3 minutos." },
+    { t: "Registrar resultado en el documento oficial y archivar en ficha." },
+    { t: "Eliminar la muestra y sanitizar la superficie.", k: "end" }
+  ]}],
+  claves: [["Detecta", "OH · COC · THC · MDMA · LSD · OPI · KET · BZO · AMP"], ["Ejecuta", "TENS (o médico)"]],
+  resp: "Psiquiatra/equipo indica; TENS ejecuta y registra; la persona firma el consentimiento.",
+  ojo: "Usar guantes, revisar fechas de vencimiento del stock y comunicar el resultado de forma clara y respetuosa."
+},
+{
+  id: "cl-02", cat: "cl", code: "CL-02", title: "Entrega de medicamentos y desechos",
+  brief: "Dispensación segura, almacenamiento y eliminación de fármacos.",
+  autor: "Vanessa Velásquez", vig: "2026-2027", src: D + "1TudZVg0vD-F7xqLL-8SemIOxv7OIIRS0/view",
+  para: "Entregar fármacos de forma gratuita y segura a personas con contrato terapéutico, consentimiento informado y registro en SISTRAT, y almacenarlos y eliminarlos según normativa.",
+  cuando: "En cada entrega de medicamentos indicada por médico o psiquiatra.",
+  viz: [{ type: "flow", steps: [
+    { t: "Verificar prescripción médica vigente." },
+    { t: "Confirmar identidad: nombre, RUT y ficha clínica." },
+    { t: "Entregar e informar dosis, vía y horarios (psicoeducación en cada entrega)." },
+    { t: "Registrar en la plataforma «Entrega de medicamentos»: fecha, hora, fármaco, dosis, responsable.", k: "end" }
+  ]}],
+  claves: [
+    ["Inasistencia", "TENS avisa al equipo. Tras 2 semanas sin retirar, se requiere autorización médica."],
+    ["Retiro por terceros", "Solo con autorización expresa de la persona y del equipo."],
+    ["Almacenamiento", "Separado por tipo; inventario mensual; acceso restringido."],
+    ["Control legal", "Caja fuerte con doble llave."],
+    ["Eliminación", "Empresa autorizada Veolia."]
+  ],
+  resp: "Médico prescribe y autoriza; TENS entrega y registra; coordinador lo hace si falta la TENS.",
+  ojo: "La bodega médica siempre bajo llave."
+},
+{
+  id: "cl-03", cat: "cl", code: "CL-03", title: "Infecciones de transmisión sexual",
+  brief: "Educación, preservativos, órdenes de examen, consejería y derivación.",
+  autor: "Catalina Aburto", vig: "2026-2027", src: D + "1efz4W1CVRInz8TZSkGADTCkbCeD5NZaB/view",
+  para: "Prevenir ITS y facilitar su detección y tratamiento mediante educación, consejería, órdenes de exámenes y derivación a la red cuando corresponda.",
+  cuando: "Durante atenciones de salud sexual, talleres grupales o cuando se identifica necesidad de examen.",
+  viz: [{ type: "flow", steps: [
+    { t: "Educación sexual y entrega de preservativos con orientación de uso." },
+    { t: "Evaluar si corresponde examen.", k: "decision" },
+    { t: "Entregar orden: panel ITS o exámenes específicos (VIH, VDRL)." },
+    { t: "La persona se hace el examen en laboratorio externo, público o privado, a su elección." },
+    { t: "Consejería con el resultado. Negativo: reforzar prevención. Positivo: tratar en el Centro si es posible, o derivar a la red." },
+    { t: "Registrar todo en ficha clínica.", k: "end" }
+  ]}],
+  resp: "Médico y matrona evalúan y emiten órdenes; matrona educa y entrega preservativos; equipo acompaña.",
+  ojo: "Tener una ITS no es motivo para interrumpir el tratamiento. Resguardar la confidencialidad de resultados."
+},
+{
+  id: "cl-04", cat: "cl", code: "CL-04", title: "Rescate",
+  brief: "Qué hacer tras 3 inasistencias injustificadas o si no se retiran los fármacos.",
+  autor: "Gabriela Cárcamo", vig: "2026-2027", src: D + "1wYQnPRjbv_7Go6x7kA_Q0OnMUjTVPMBY/view",
+  para: "Intentar re-vincular a la persona antes de cerrar su ficha por abandono. Los cupos son limitados y existe lista de espera.",
+  cuando: "Al registrarse la 3ª inasistencia injustificada (sin aviso con 24 h). Cancelar por AgendaPro con 24 h cuenta como aviso.",
+  viz: [
+    { type: "flow", title: "Por inasistencias", steps: [
+      { t: "Durante 3 días: una llamada diaria a la persona y otra a su referente." },
+      { t: "Sin respuesta: notificación formal por WhatsApp institucional y correo. No se agendan nuevas horas.", k: "alert" },
+      { t: "Sesión de encuadre y firma del documento de compromiso." },
+      { t: "Asiste y cumple: termina el rescate. No asiste o no cumple: cierre de ficha por abandono, revisado en reunión clínica.", k: "decision" }
+    ]},
+    { type: "flow", title: "Por no retiro de fármacos", steps: [
+      { t: "Encuadre con médico." },
+      { t: "Si persiste: encuadre con directora o coordinadora." },
+      { t: "Si persiste: alta por abandono.", k: "end" }
+    ]}
+  ],
+  claves: [["Tope", "3 rescates por tratamiento"], ["4º rescate", "Excepcional, en reunión clínica: enfermedad con certificado, hospitalización, viaje, reclusión, motivo laboral"]],
+  resp: "Equipo tratante llama y registra; TENS gestiona retiro de fármacos; directora o coordinadora disponen el encuadre.",
+  ojo: "Registrar cada rescate en la ficha e informar en el encuadre cuántos lleva la persona."
+},
+{
+  id: "cl-05", cat: "cl", code: "CL-05", title: "Prevención de recaídas",
+  brief: "Taller de 4 sesiones, Estrategia de Prevención Personal y respuesta ante lapsos.",
+  autor: "Pablo Carrillo", vig: "12 meses desde sept. 2026", src: D + "1HsKe9GUnGnjyR7GZKPsb2eYXSgIQbTZR/view",
+  para: "Detectar temprano y manejar las recaídas como un proceso, no como un fracaso. Una recaída no es por sí sola motivo de alta.",
+  cuando: "Durante todo el tratamiento. El taller se activa cuando la persona está en etapa de acción o mantenimiento.",
+  viz: [
+    { type: "phases", title: "La recaída avanza en tres fases", phases: [
+      { h: "Emocional", d: "Ansiedad, aislamiento, mal sueño, descuido. → Sesión urgente, revisar EPP, activar red." },
+      { h: "Mental", d: "Idealiza el consumo, ambivalencia, contacto con riesgos. → Abordaje motivacional, manejo del craving, evaluar fármacos." },
+      { h: "Física", d: "Lapso: acogida sin juicio, análisis funcional, trabajar la culpa. Recaída: contener sin expulsar, revisar PTI y EPP." }
+    ]},
+    { type: "flow", title: "Taller (máx. 10 personas)", steps: [
+      { t: "Sesión 1: la recaída como proceso." },
+      { t: "Sesión 2: línea gradual del deseo." },
+      { t: "Sesión 3: matriz de las 4P." },
+      { t: "Sesión 4: Estrategia de Prevención Personal (EPP).", k: "end" }
+    ]}
+  ],
+  claves: [["EPP", "Se integra al PTI y se revisa en cada evaluación trimestral"]],
+  resp: "Psicólogo/a facilita el taller y sigue la EPP; médico ajusta fármacos; Trabajo Social rescata; técnico en rehabilitación observa señales.",
+  ojo: "Ante un lapso, evaluar siempre riesgo vital (intoxicación, ideación suicida). Si la persona deja de asistir, se aplica el Protocolo de Rescate.",
+  rel: ["cl-04", "ur-02", "cl-06"]
+},
+{
+  id: "cl-06", cat: "cl", code: "CL-06", title: "Intervención con familias",
+  brief: "Referente de apoyo, sesiones quincenales y respuesta a alertas familiares.",
+  autor: "Carla Cárdenas", vig: "2026-2027", src: D + "1F5sToZCRneyA8TXLGApfCdGvN7ZJ3oiQ/view",
+  para: "Incorporar a familiares o figuras significativas como red de apoyo y coordinar la respuesta del equipo ante alertas o crisis familiares.",
+  cuando: "Desde el ingreso y durante todo el tratamiento.",
+  viz: [{ type: "flow", steps: [
+    { t: "Identificar referente de apoyo: vínculo, disponibilidad y capacidad de apoyo." },
+    { t: "¿No hay referente o la persona no quiere incluirlo? Respetarlo, firmar la «Constancia de no incorporación» y reevaluar después.", k: "decision" },
+    { t: "Sesiones quincenales con Trabajo Social." },
+    { t: "Registrar en ficha y comunicar al equipo." },
+    { t: "Ante una alerta: acoger, registrar, comunicar, decidir con el equipo y facilitar psiquiatra si corresponde.", k: "alert" },
+    { t: "Intensificar en semanas 1–2; visitas de rescate en dupla." },
+    { t: "Retomar lo ocurrido en sesiones posteriores.", k: "end" }
+  ]}],
+  resp: "Trabajo Social coordina; quien recibe una alerta la registra y comunica; el equipo decide.",
+  ojo: "Acordar desde el inicio qué información se comparte con la familia. Evaluar la sobrecarga del referente. La responsabilidad terapéutica es de la persona y del equipo, no de la familia."
+},
+{
+  id: "cl-07", cat: "cl", code: "CL-07", title: "Integración social",
+  brief: "Evaluación e intervención en funcionamiento social, liderada por Terapia Ocupacional.",
+  autor: "Cecilia Pérez (T.O.)", vig: "2026-2027", src: D + "15vKxEAL8HmLFSlR6C5d3wyuvuiCGcjZe/view",
+  para: "Evaluar e intervenir la dimensión de Integración y Funcionamiento Social para fortalecer autonomía, participación y capitales de recuperación.",
+  cuando: "Desde la fase diagnóstica hasta el egreso.",
+  viz: [{ type: "flow", steps: [
+    { t: "Exploración en fase diagnóstica (T.O.; Trabajo Social complementa)." },
+    { t: "Identificar necesidades y capitales: humano, social, físico y cultural." },
+    { t: "Análisis en reunión clínica interdisciplinaria." },
+    { t: "Síntesis en la Evaluación Integral." },
+    { t: "Objetivos de Funcionamiento Social en el PTI, construidos con la persona." },
+    { t: "Intervenciones: rutinas, orientación sociolaboral, redes, oferta social." },
+    { t: "Seguimiento continuo y revisión trimestral." },
+    { t: "Evaluación al egreso y continuidad de cuidados.", k: "end" }
+  ]}],
+  claves: [["Instrumentos sugeridos", "OSA, OCAIRS, OPHI-II, COPM, Role Checklist, Listado de Intereses, Ecomapa, Genograma, Diagnóstico IS SENDA (no obligatorios)"]],
+  resp: "T.O. lidera; Trabajo Social evalúa lo socioeconómico y habitacional; todo el equipo aporta desde su disciplina.",
+  ojo: "Verificar después de cada derivación que la persona efectivamente se vinculó."
+},
+
+/* ───────────── INCLUSIÓN Y TRATO ───────────── */
+{
+  id: "in-01", cat: "in", code: "IN-01", title: "Personas de pueblos originarios",
+  brief: "Pesquisa voluntaria y atención con pertinencia cultural.",
+  autor: "Gabriela Cárcamo", vig: "2026-2027", src: D + "1zlkiNdHZs-YxptocSs9Otff328N1TtKP/view",
+  para: "Asegurar una atención igualitaria, sin discriminación y con pertinencia cultural, que reconozca la identidad y los recursos comunitarios de la persona.",
+  cuando: "Se activa cuando la persona declara pertenencia a un pueblo originario. Puede no responder.",
+  viz: [{ type: "flow", steps: [
+    { t: "Acogida: presentarse con nombre y cargo; preguntar cómo prefiere que le llamen." },
+    { t: "Primera entrevista: «¿Se considera perteneciente a algún pueblo originario o indígena? ¿A cuál?» y consultar preferencias de trato.", k: "decision" },
+    { t: "Si declara: evaluación intercultural (forma de nombrar el malestar, territorio, espiritualidad, discriminación vivida)." },
+    { t: "Plan co-construido. El médico pregunta sin juzgar por hierbas o remedios tradicionales." },
+    { t: "Con consentimiento: coordinar con facilitador/a intercultural (PESPI), red y comunidad." },
+    { t: "Seguimiento en reunión clínica.", k: "end" }
+  ]}],
+  resp: "Profesional de la primera entrevista pregunta y registra; Trabajo Social vincula con la red; todo el equipo cuida el trato.",
+  ojo: "No asumir creencias por la pertenencia. No se exige acreditación. Cualquier discriminación la aborda Dirección de inmediato."
+},
+{
+  id: "in-02", cat: "in", code: "IN-02", title: "Personas migrantes",
+  brief: "Igualdad de acceso, intérprete si hace falta y gestión previsional.",
+  autor: "Gabriela Cárcamo", vig: "2026-2027", src: D + "1oW3jYNJPP0xn2KPsIpS1iLmx3lFd3dHr/view",
+  para: "Garantizar acceso, calidad y continuidad del tratamiento a personas migrantes. La situación migratoria no impide la atención, que es gratuita, voluntaria y confidencial.",
+  cuando: "Se activa si la persona nació en otro país o tiene necesidades ligadas a su proceso migratorio.",
+  viz: [{ type: "flow", steps: [
+    { t: "Pesquisa: ¿nació en Chile?, ¿hace cuánto reside?, ¿en qué idioma prefiere recibir información?" },
+    { t: "Acogida: presentarse con nombre y cargo; atender primero necesidades básicas." },
+    { t: "¿Barrera idiomática? Intérprete, mediador/a o persona de confianza. Nunca niños, niñas o adolescentes.", k: "alert" },
+    { t: "Entrevista de ingreso: proceso migratorio, duelo, redes, trabajo, vivienda, violencia o trata." },
+    { t: "Consentimiento y contrato verificando que comprendió." },
+    { t: "Trabajo Social: previsión (calificación de derecho FONASA), regularización y redes." },
+    { t: "PTI con pertinencia cultural y seguimiento en reunión clínica.", k: "end" }
+  ]}],
+  resp: "Secretaría acoge; profesional de ingreso pesquisa; Trabajo Social y técnico en rehabilitación gestionan lo social.",
+  ojo: "Ante sospecha de violencia, explotación o trata: activar protección y derivación, resguardando la confidencialidad."
+},
+{
+  id: "in-03", cat: "in", code: "IN-03", title: "Personas trans",
+  brief: "Nombre social y pronombres desde el preingreso, sin discriminación.",
+  autor: "Catalina Aburto", vig: "2026-2027", src: D + "1kDs9IE9dJyP274mlkV9HwxdrcG5quddj/view",
+  para: "Garantizar un trato digno, respetuoso e igualitario hacia las personas trans, de acuerdo con la Ley 21.120 de identidad de género.",
+  cuando: "Desde la entrevista de preingreso y en toda la atención.",
+  viz: [{ type: "flow", steps: [
+    { t: "Preingreso: el técnico en rehabilitación pregunta «¿Se identifica usted como una persona trans o transgénero?» y el nombre social." },
+    { t: "Informa el nombre social al equipo en la próxima reunión administrativa." },
+    { t: "Todo el equipo usa el nombre social y los pronombres que la persona indique." },
+    { t: "Se resguarda la confidencialidad de la información.", k: "end" }
+  ]}],
+  claves: [["Principios (Ley 21.120)", "No patologización · No discriminación arbitraria · Confidencialidad · Dignidad en el trato"]],
+  resp: "Técnico en rehabilitación pregunta y comunica; todo el equipo y funcionarios aplican.",
+  ojo: "El equipo debe conocer el glosario de diversidad sexual e identidad de género del protocolo."
+},
+{
+  id: "in-04", cat: "in", code: "IN-04", title: "Discapacidad visual",
+  brief: "Orientación, guía humana, información accesible y consentimiento.",
+  autor: "Amanda Vera", vig: "2026-2027", src: D + "1YVS5SDQJ15csAn9i4DH3XlE7PIusfzgu/view",
+  para: "Atender a personas ciegas o con baja visión con seguridad y autonomía, desde la citación hasta la salida.",
+  cuando: "Cuando la persona o el agendamiento indican discapacidad visual.",
+  viz: [{ type: "flow", steps: [
+    { t: "Al agendar: preguntar si requiere ajustes y su medio preferido de información. Despejar ruta y box." },
+    { t: "Recepción: identificarse, decir quién más está presente y preguntar «¿Necesita apoyo? ¿Cómo prefiere que le ayude?»" },
+    { t: "Si acepta guía: ofrecer el brazo y anticipar puertas, giros y escalones." },
+    { t: "En el box: describir la distribución; usar referencias precisas («a su derecha, a dos pasos»); pedir permiso antes de cualquier contacto." },
+    { t: "Cuestionarios y consentimiento leídos o en formato accesible; verificar comprensión y documentar adaptaciones." },
+    { t: "Cierre: resumen accesible, orientar a la salida y registrar preferencias y barreras.", k: "end" }
+  ]}],
+  resp: "Recepción orienta; profesional tratante adapta y registra; coordinación resuelve barreras.",
+  ojo: "No tocar bastón, perro de asistencia ni pertenencias sin autorización. No dejar a la persona sola en un lugar desconocido sin avisar."
+},
+{
+  id: "in-05", cat: "in", code: "IN-05", title: "Discapacidad auditiva",
+  brief: "Método de comunicación preferido, apoyos y verificación de comprensión.",
+  autor: "Karina Villarroel", vig: "2026-2027", src: D + "133n8AWpS1E3PmkJnQ0VmvlL_rBdhTmgD/view",
+  para: "Reducir barreras de comunicación para que personas sordas o con hipoacusia comprendan su atención y decidan sobre ella.",
+  cuando: "Cuando la persona o el agendamiento indican discapacidad auditiva.",
+  viz: [{ type: "flow", steps: [
+    { t: "Agendamiento: preguntar qué apoyos comunicacionales requiere y registrarlo." },
+    { t: "Recepción: preguntar directamente su método de comunicación preferido." },
+    { t: "Elegir apoyos: escritura, LSCh o intérprete, apoyos visuales, tecnología o acompañante autorizado." },
+    { t: "Atender de frente, rostro visible, buena luz; no gritar ni cubrirse la boca." },
+    { t: "Verificar comprensión antes de cada decisión relevante.", k: "decision" },
+    { t: "Consentimiento accesible: la firma por sí sola no acredita comprensión." },
+    { t: "Cierre: indicaciones accesibles, canales de reclamo y registro de apoyos usados.", k: "end" }
+  ]}],
+  claves: [["Metas", "≥95% con necesidades registradas · ≥90% con apoyos registrados"]],
+  resp: "Administrativos consultan y registran; profesionales adaptan y verifican; Coordinación Clínica supervisa.",
+  ojo: "La lectura labial no garantiza comprensión. Sin comunicación suficiente, gestionar apoyo antes de una decisión clínica, salvo urgencia."
+},
+{
+  id: "in-06", cat: "in", code: "IN-06", title: "Discapacidad psíquica",
+  brief: "Pesquisa de necesidades de apoyo y trato adulto y respetuoso.",
+  autor: "Sebastián Diez", vig: "2026-2027", src: D + "1EcRIAZWW6PeeEg9Vq24sXnpWtVw84LxS/view",
+  para: "Orientar un trato respetuoso, claro y ajustado a las necesidades de personas con discapacidad psíquica, sin estigmatizar.",
+  cuando: "En la entrevista de ingreso y en toda la atención.",
+  viz: [{ type: "flow", steps: [
+    { t: "Ingreso: preguntar si alguna condición de salud mental le dificulta de forma persistente comprender, relacionarse, organizarse o trabajar, y si necesita algún apoyo o ajuste." },
+    { t: "Si hay dificultades: registrarlas de forma descriptiva y presentar el caso al equipo de ingreso.", k: "decision" },
+    { t: "Atención: trato adulto, información clara y pausada, comprobar comprensión." },
+    { t: "Ante malestar: tono sereno, no discutir lo que percibe, ofrecer alternativas concretas." },
+    { t: "Si excede las funciones o hay riesgo inmediato: pedir apoyo al equipo.", k: "alert" }
+  ]}],
+  resp: "Quien conduce la atención consulta por apoyos y pide ayuda al equipo cuando corresponde.",
+  ojo: "La pesquisa no es diagnóstico ni certificación. La discapacidad psíquica no permite suponer violencia ni incapacidad para comprender."
+},
+
+/* ───────────── GESTIÓN, REGISTRO Y DERECHOS ───────────── */
+{
+  id: "ge-01", cat: "ge", code: "GE-01", title: "Ficha clínica",
+  brief: "Qué registrar, cómo firmar y cómo responder si se solicita la ficha.",
+  autor: "Pablo Carrillo", vig: "12 meses desde marzo 2026", src: D + "1XjySGq5A9b3ABixGXQvlQC_cocarHWAD/view",
+  para: "Registrar de forma obligatoria y cronológica cada atención (Ley 20.584) y responder a solicitudes de acceso a la ficha.",
+  cuando: "En cada atención y cada vez que se solicite la ficha.",
+  viz: [
+    { type: "flow", title: "Registro", steps: [
+      { t: "Administración crea a la persona en AgendaPro." },
+      { t: "Cada profesional registra cada atención, en orden cronológico." },
+      { t: "Firma: inicial del nombre, apellido paterno y profesión (Ps., Enf., etc.)." },
+      { t: "La carpeta incluye contrato terapéutico y consentimiento informado.", k: "end" }
+    ]},
+    { type: "flow", title: "Solicitud de la ficha", steps: [
+      { t: "La persona completa y firma la solicitud." },
+      { t: "El Centro tiene 15 días hábiles para responder." },
+      { t: "Entrega física con acta firmada por quien entrega y quien recibe.", k: "end" }
+    ]}
+  ],
+  claves: [
+    ["Conservación", "Mínimo 15 años"],
+    ["Pueden acceder", "Paciente o representante legal; terceros con poder notarial; tribunales; fiscales con autorización judicial; Superintendencia, FONASA e Isapres"]
+  ],
+  resp: "Cada profesional registra; administración mantiene los datos de la persona.",
+  ojo: "Todo registro debe ser fidedigno y descriptivo de la atención realizada."
+},
+{
+  id: "ge-02", cat: "ge", code: "GE-02", title: "Almacenamiento de datos",
+  brief: "Respaldo digital, carpetas físicas y eliminación a los 15 años.",
+  autor: "Pablo Carrillo", vig: "12 meses desde marzo 2026", src: D + "190C3ZXt1hNv_GHfZHnrYEvoD2gX73nJG/view",
+  para: "Resguardar y conservar la información de las atenciones según la Ley 19.628 de protección de datos personales.",
+  cuando: "Durante todo el tratamiento y tras el egreso.",
+  viz: [{ type: "flow", steps: [
+    { t: "Registrar cada atención en AgendaPro, lo más actualizado posible." },
+    { t: "Cada semana (viernes): carga de prestaciones en SISTRAT, según el protocolo SISTRAT." },
+    { t: "Fin de mes: respaldo de AgendaPro en memoria externa guardada bajo llave." },
+    { t: "Cada profesional respalda sus casos; la psicóloga del PAI-M revisa que se haga." },
+    { t: "Usuario activo: archivador físico en secretaría." },
+    { t: "Al egreso: carpeta comprimida, en caja, a bodega bajo llave." },
+    { t: "Eliminación física y digital a los 15 años del egreso.", k: "end" }
+  ]}],
+  resp: "Cada profesional del PAI respalda sus casos; psicóloga PAI-M supervisa.",
+  ojo: "La información debe estar disponible para la persona hasta 15 años si la solicita."
+},
+{
+  id: "ge-03", cat: "ge", code: "GE-03", title: "Registro SISTRAT",
+  brief: "Carga semanal de prestaciones a SENDA y control de errores.",
+  autor: "Pablo Carrillo", vig: "12 meses desde marzo 2026", src: D + "1htq-E5MGHx1sC1XbbRvQSTyMcGD8mmO9/view",
+  para: "Informar a SENDA las prestaciones de cada persona usuaria para su facturación y pago, con datos que coincidan con la ficha clínica.",
+  cuando: "Cada semana, y ante cualquier error de registro.",
+  viz: [{ type: "flow", steps: [
+    { t: "Psicólogo y Terapeuta Ocupacional ingresan con la clave entregada por SENDA." },
+    { t: "Suben las prestaciones semanalmente, de preferencia el viernes, según el plan de tratamiento." },
+    { t: "Incluyen los seguimientos de personas egresadas." },
+    { t: "Imprimir el resumen mensual de cada persona y archivarlo en su ficha." },
+    { t: "Directora verifica cantidad, calidad y coincidencia con la ficha." },
+    { t: "Ante un error: correo inmediato a la gestora de calidad de SENDA y seguir sus indicaciones.", k: "alert" }
+  ]}],
+  resp: "Psicólogo y T.O. registran; Directora supervisa; equipo tratante entrega información completa.",
+  ojo: "Cada prestación debe ir con su codificación y descripción correctas."
+},
+{
+  id: "ge-04", cat: "ge", code: "GE-04", title: "Solicitud de información",
+  brief: "Cómo recibir y responder pedidos de información clínica, judicial o estadística.",
+  autor: "Carla Cárdenas", vig: "2026-2027", src: D + "1fiPw8eqOHU41HxxWTYSNK9-852aVTRlq/view",
+  para: "Entregar información clínica o estadística solo cuando la solicitud es legítima, por canales formales y dejando trazabilidad.",
+  cuando: "Cuando la persona usuaria, un tercero autorizado, un representante legal, un tribunal o una institución pide información.",
+  viz: [{ type: "flow", steps: [
+    { t: "La solicitud llega por escrito. Si la recibe otra persona, la deriva a Secretaría el mismo día." },
+    { t: "Secretaría registra con número correlativo y fecha límite." },
+    { t: "Clasificar: persona usuaria, tercero autorizado, representante, judicial o estadística." },
+    { t: "Verificar identidad, autorizaciones y legitimidad." },
+    { t: "Directora y Coordinadora deciden: autorizada, pendiente o no procede.", k: "decision" },
+    { t: "Preparar solo la información mínima necesaria y revisarla." },
+    { t: "Entregar por canal institucional, registrar y archivar.", k: "end" }
+  ]}],
+  claves: [
+    ["Plazo usuarios", "Hasta 15 días hábiles, igual que la ficha clínica (no se entrega el mismo día)"],
+    ["Plazo judicial", "El que indique el requerimiento"],
+    ["Revisión", "Cada lunes en reunión administrativa; urgencias de inmediato"]
+  ],
+  resp: "Secretaría registra y controla plazos; Directora autoriza; profesionales preparan solo lo de su área.",
+  ojo: "Nunca entregar información por WhatsApp, correo personal o fotos de documentos. La estadística externa va siempre anonimizada."
+},
+{
+  id: "ge-05", cat: "ge", code: "GE-05", title: "Reclamos, sugerencias y felicitaciones",
+  brief: "Canales, plazos de acuse y respuesta, y casos urgentes.",
+  autor: "Karina Villarroel", vig: "2026-2027", src: D + "1sUiVwB4QZYcIPYn5yo8PrXkg0yjomE9N/view",
+  para: "Recibir, registrar, responder y usar las opiniones de las personas para mejorar la atención, resguardando sus derechos.",
+  cuando: "Cada vez que alguien presenta un reclamo, sugerencia o felicitación por libro, correo institucional, buzón de sala de espera o verbalmente (se le ayuda a dejarlo por escrito).",
+  viz: [{ type: "timeline", steps: [
+    { at: "Cada día hábil", t: "Secretaría revisa el buzón y deja constancia, aunque no haya presentaciones." },
+    { at: "Al recibir", t: "Registro en el libro con número correlativo y derivación a Dirección, que clasifica y evalúa urgencia." },
+    { at: "≤ 3 días hábiles", t: "Acuse de recibo, si hay datos de contacto." },
+    { at: "≤ 10 días hábiles", t: "Meta interna de respuesta escrita y fundada." },
+    { at: "≤ 15 días hábiles", t: "Plazo legal (DS 35) para reclamos sobre derechos de la Ley 20.584." },
+    { at: "Cada semana", t: "Dirección revisa casos pendientes y medidas comprometidas." }
+  ]}],
+  resp: "Secretaría recibe, registra y da acuse; Dirección clasifica, responde y hace seguimiento; el equipo aporta antecedentes.",
+  ojo: "Si hay riesgo, violencia o vulneración de derechos: avisar a Dirección de inmediato, sin esperar plazos. Nunca represalias. Las felicitaciones se comunican al equipo."
+},
+{
+  id: "ge-06", cat: "ge", code: "GE-06", title: "Satisfacción usuaria",
+  brief: "Cuatro mecanismos para escuchar a las personas, incluida la encuesta OPOC anual.",
+  autor: "Gabriela Cárcamo", vig: "Desde marzo 2026", src: D + "1Bjzt1iws2qkzUum52UmGHd2hM8vWfY72/view",
+  para: "Recoger, analizar y responder la percepción de calidad de las personas en tratamiento y egresadas, para mejorar de forma continua.",
+  cuando: "De forma continua en las sesiones y una vez al año con la encuesta OPOC-Chile.",
+  viz: [{ type: "flow", steps: [
+    { t: "Consulta continua: el equipo pregunta a la persona cómo se siente en su proceso; si no está cómoda, se adoptan mejoras." },
+    { t: "Libro de reclamos y sugerencias en secretaría. Ante un reclamo se entrega carta de respuesta con las acciones." },
+    { t: "Encuesta OPOC-Chile en octubre o noviembre: personas con 6 meses o más en tratamiento y egresadas por alta terapéutica del año. Voluntaria y anónima." },
+    { t: "Informe de resultados con áreas de mejora para los equipos y el Centro.", k: "end" }
+  ]}],
+  resp: "Equipo tratante consulta; secretaría mantiene el libro; área social aplica OPOC y elabora el informe.",
+  ojo: "Escuchar a las personas es parte del tratamiento, no un trámite."
+}
+];
+
+/* Protocolos relacionados (se muestran como accesos al final de cada resumen) */
+const REL = {
+  "ur-01": ["ur-02", "cl-06", "ur-04"], "ur-02": ["ur-01", "ur-03", "ur-04"], "ur-03": ["ur-02"],
+  "ur-04": ["ur-01", "ur-02"], "ur-05": ["cl-01", "cl-02", "ur-02"],
+  "cl-01": ["ur-05"], "cl-02": ["cl-04", "ge-03"], "cl-03": ["ge-01"], "cl-04": ["cl-05", "cl-02", "cl-06"],
+  "cl-06": ["ur-01", "cl-04"], "cl-07": ["cl-06"],
+  "in-01": ["ge-05", "cl-04", "cl-07"], "in-02": ["ge-05", "cl-04", "cl-07"], "in-03": ["ge-05"],
+  "in-04": ["ge-05", "in-05"], "in-05": ["ge-05", "in-04"], "in-06": ["ur-01"],
+  "ge-01": ["ge-04", "ge-02"], "ge-02": ["ge-03", "ge-01"], "ge-03": ["ge-02"], "ge-04": ["ge-01"],
+  "ge-05": ["ge-06"], "ge-06": ["ge-05"]
+};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ORDER = ["ur", "cl", "in", "ge"];
+let filter = "all", query = "";
+const ICON = {
+  ur: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2M4.2 6.2l1.4 1.4M19.8 6.2l-1.4 1.4"/><path d="M6 18v-5a6 6 0 0 1 12 0v5"/><path d="M4 18h16v3H4z"/></svg>',
+  cl: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M8 13h2l1.5-3 2 6 1.5-3h1"/></svg>',
+  in: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14.5c3 0 6 1.8 6 5"/></svg>',
+  ge: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 13h8M8 16h5"/></svg>'
+};
+const vars = k => `--c:var(--${k});--bg:var(--${k}-bg)`;
+
+const norm = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const haystack = p => norm(JSON.stringify([p.title, p.brief, p.para, p.cuando, p.resp, p.ojo, p.viz, p.claves, p.code]));
+
+function renderChips() {
+  $("#cats").innerHTML = ORDER.map(k => {
+    const n = P.filter(p => p.cat === k).length;
+    return `<button class="cat" id="cat-${k}" type="button" data-k="${k}" aria-pressed="${filter === k}" style="${vars(k)}">
+      <span class="ico">${ICON[k]}</span><span><b>${esc(CATS[k].name)}</b><small>${esc(CATS[k].hint)}</small><span class="ct">${n} protocolos</span></span></button>`;
+  }).join("");
+  $("#reset").hidden = filter === "all";
+}
+
+function renderUrgent() {
+  const u = P.filter(p => p.urgent);
+  $("#urgent").insertAdjacentHTML("beforeend",
+    u.map(p => `<button type="button" data-open="${p.id}">${esc(p.title)}</button>`).join(""));
+}
+
+function renderGroups() {
+  const q = norm(query.trim());
+  let html = "", total = 0;
+  for (const k of ORDER) {
+    if (filter !== "all" && filter !== k) continue;
+    const list = P.filter(p => p.cat === k && (!q || haystack(p).includes(q)));
+    if (!list.length) continue;
+    total += list.length;
+    html += `<section class="grp" style="${vars(k)}">
+      <div class="grp-h"><span class="ico">${ICON[k]}</span><div><h2>${esc(CATS[k].name)}</h2><p>${list.length} protocolo${list.length > 1 ? "s" : ""} · ${esc(CATS[k].hint)}</p></div></div>
+      <div class="grid">${list.map(card).join("")}</div></section>`;
+  }
+  $("#groups").innerHTML = total ? html : `<p class="empty">No hay protocolos que coincidan con «${esc(query)}».</p>`;
+}
+
+function card(p) {
+  return `<button class="pcard" type="button" data-open="${p.id}" style="${vars(p.cat)}">
+    <span class="code"><span>${p.code}</span>${p.urgent ? '<span class="u">Urgencia</span>' : ""}</span>
+    <h3>${esc(p.title)}</h3><p>${esc(p.brief)}</p><span class="go">Ver resumen →</span></button>`;
+}
+
+/* ---- visualizaciones ---- */
+function flow(steps) {
+  return `<ol class="flow">${steps.map(s => `<li class="${s.k || ""}"><span class="t">${esc(s.t)}</span></li>`).join("")}</ol>`;
+}
+function viz(v) {
+  const head = v.title ? `<div class="vtitle">${esc(v.title)}</div>` : "";
+  if (v.type === "flow") return head + flow(v.steps);
+  if (v.type === "lanes") return head + `<div class="lanes">${v.lanes.map(l => `<div class="lane"><div class="vtitle">${esc(l.title)}</div>${flow(l.steps)}</div>`).join("")}</div>`;
+  if (v.type === "timeline") return head + `<ol class="tl">${v.steps.map(s => `<li><span class="at">${esc(s.at)}</span><span class="t">${esc(s.t)}</span></li>`).join("")}</ol>`;
+  if (v.type === "tiers") return head + `<div class="tiers">${v.tiers.map((t, i) => `<div class="tier t${i}"><h5><i></i>Riesgo ${esc(t.lvl.toLowerCase())}</h5><ul>${t.items.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`).join("")}</div>`;
+  if (v.type === "phases") return head + `<div class="phases">${v.phases.map((x, i) => `<div class="ph" style="--i:${i}"><b>${esc(x.h)}</b><span>${esc(x.d)}</span></div>`).join("")}</div>`;
+  return "";
+}
+
+function sheet(p) {
+  const idx = P.indexOf(p), prev = P[idx - 1], next = P[idx + 1];
+  const flows = p.viz.filter(v => v.type === "flow" && v.title);
+  const vizHtml = flows.length === 2 && p.viz.length === 2
+    ? `<div class="multi two">${p.viz.map(v => `<div class="lane">${viz(v)}</div>`).join("")}</div>`
+    : `<div class="multi">${p.viz.map(viz).join("")}</div>`;
+  return `<div class="sheet-bg" id="bg"><article class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title" style="${vars(p.cat)}">
+    <div class="sh-top"><div class="row"><span class="ico">${ICON[p.cat]}</span><div><div class="code">${p.code} · ${esc(CATS[p.cat].name)}</div><h2 id="sh-title">${esc(p.title)}</h2></div></div>
+      <button class="x" id="close" type="button" aria-label="Cerrar">×</button></div>
+    <div class="sh-body">
+      <div class="purpose">
+        <div class="box para"><div class="lbl">Para qué sirve</div><p>${esc(p.para)}</p></div>
+        <div class="box"><div class="lbl">Cuándo se activa</div><p>${esc(p.cuando)}</p></div>
+      </div>
+      <div><h4 class="sec">Qué hay que hacer</h4>${vizHtml}</div>
+      ${p.claves ? `<div><h4 class="sec">Datos clave</h4><dl class="claves">${p.claves.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>` : ""}
+      <div class="box"><div class="lbl">Responsables</div><p>${esc(p.resp)}</p></div>
+      ${p.ojo ? `<div class="ojo"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5l8 14H2l8-14z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 8v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="14.3" r="1" fill="currentColor"/></svg><p><strong>Ojo: </strong>${esc(p.ojo)}</p></div>` : ""}
+      ${rel(p)}
+      <div class="meta"><span>Elaboró: ${esc(p.autor)}</span><span>Vigencia: ${esc(p.vig)}</span><a href="${p.src}" target="_blank" rel="noopener">Abrir protocolo completo ↗</a></div>
+    </div>
+    <div class="nav">
+      <button class="btn" type="button" ${prev ? `data-open="${prev.id}"` : "disabled"}>← ${prev ? esc(prev.title) : ""}</button>
+      <button class="btn" type="button" ${next ? `data-open="${next.id}"` : "disabled"}>${next ? esc(next.title) : ""} →</button>
+    </div></article></div>`;
+}
+
+function rel(p) {
+  const ids = p.rel || REL[p.id] || [];
+  const items = ids.map(id => P.find(x => x.id === id)).filter(Boolean);
+  if (!items.length) return "";
+  return `<div><h4 class="sec">Protocolos relacionados</h4><div class="rel">${items.map(r =>
+    `<button type="button" data-open="${r.id}" style="--rb:var(--${r.cat}-bg);--rc:var(--${r.cat})">${r.code} · ${esc(r.title)}</button>`).join("")}</div></div>`;
+}
+
+let lastFocus = null;
+function open(id, push = true) {
+  const p = P.find(x => x.id === id);
+  if (!p) return close(false);
+  if (!$("#bg")) lastFocus = document.activeElement;
+  $("#sheetRoot").innerHTML = sheet(p);
+  document.body.classList.add("lock");
+  $("#bg").scrollTop = 0;
+  $("#close").focus({ preventScroll: true });
+  if (push && location.hash !== "#" + id) location.hash = id;
+}
+function close(push = true) {
+  $("#sheetRoot").innerHTML = "";
+  document.body.classList.remove("lock");
+  if (push && location.hash) history.replaceState(null, "", location.pathname + location.search);
+  if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+}
+
+document.addEventListener("click", e => {
+  const o = e.target.closest("[data-open]");
+  if (o) { open(o.dataset.open); return; }
+  if (e.target.id === "close" || e.target.id === "bg") { close(); return; }
+  const c = e.target.closest(".cat");
+  if (c) { filter = filter === c.dataset.k ? "all" : c.dataset.k; renderChips(); renderGroups(); return; }
+  if (e.target.id === "reset") { filter = "all"; renderChips(); renderGroups(); }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#bg")) close(); });
+$("#q").addEventListener("input", e => { query = e.target.value; renderGroups(); });
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); h ? open(h, false) : close(false); });
+
+renderChips(); renderUrgent(); renderGroups();
+if (location.hash.length > 1) open(location.hash.slice(1), false);
+</script>
+
+</body></html>
