@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+<title>Correcciones de protocolos CCC</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: lista de trabajo. Cabecera con barra de avance; cuatro bloques por tipo de corrección;
+   cada ítem es una fila marcable con el protocolo, el problema y el cambio exacto. Tema claro fijo. */
+:root{
+  color-scheme:light;
+  --paper:#F5F8F7; --card:#FFFFFF; --ink:#1F2D33; --muted:#5A6B71; --line:#DCE4E2; --soft:#EEF3F2;
+  --a:#2E7D50; --a-bg:#E6F4EC;   /* decidido */
+  --b:#C2533B; --b-bg:#FCEEEA;   /* por decidir */
+  --c:#A5690F; --c-bg:#FDF3E1;   /* verificar */
+  --d:#2D6CA2; --d-bg:#EAF2FA;   /* redacción */
+  --ai:#7A58A8; --ai-bg:#F2EDF9;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16.5px;line-height:1.6}
+.wrap{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--d);outline-offset:2px}
+header{background:var(--card);border-bottom:1px solid var(--line)}
+header .wrap{padding-block:38px 26px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,5.4vw,48px);line-height:1.04;margin:12px 0 10px;letter-spacing:-.02em;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.progress{margin-top:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bar{flex:1 1 240px;height:12px;border-radius:999px;background:var(--soft);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--a);border-radius:999px;transition:width .3s}
+.progress b{font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+.tog{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--muted);cursor:pointer}
+.tog input{width:18px;height:18px;accent-color:var(--a)}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.legend a{font-size:14px;font-weight:700;text-decoration:none;padding:6px 12px;border-radius:999px;background:var(--bg);color:var(--fg)}
+main .wrap{padding-block:10px 60px}
+section{margin-top:38px}
+.sh{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.sh .dot{flex:none;width:14px;height:14px;border-radius:4px;background:var(--fg);margin-top:9px}
+.sh h2{font-family:var(--f-display);font-weight:800;font-size:24px;line-height:1.15;margin:0}
+.sh p{margin:3px 0 0;color:var(--muted);font-size:15px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin-bottom:10px;border-left:5px solid var(--fg);transition:opacity .2s}
+.item input{width:22px;height:22px;margin:3px 0 0;accent-color:var(--a);cursor:pointer}
+.item .body{min-width:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.tag{font-family:var(--f-mono);font-size:11.5px;padding:2px 8px;border-radius:6px;background:var(--soft);color:var(--muted)}
+.tag.k{background:var(--bg);color:var(--fg)}
+.item h3{font-family:var(--f-display);font-weight:600;font-size:18.5px;line-height:1.25;margin:2px 0 6px;text-wrap:balance}
+.item p{margin:0 0 8px}
+.fix{background:var(--a-bg);border-radius:10px;padding:10px 14px;margin-top:6px}
+.fix .l{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--a);display:block;margin-bottom:2px}
+.fix p:last-child,.fix ul:last-child{margin-bottom:0}
+.fix ul{margin:4px 0;padding-left:20px}
+.where{font-size:14px;color:var(--muted)}
+.urls{display:grid;gap:8px;margin-top:8px}
+.url{display:grid;grid-template-columns:1fr;gap:2px;background:var(--soft);border-radius:10px;padding:10px 12px;min-width:0}
+.url .bad{font-family:var(--f-mono);font-size:12.5px;color:var(--b);text-decoration:line-through;overflow-wrap:anywhere}
+.url .good{display:flex;gap:8px;align-items:center;min-width:0}
+.url code{font-family:var(--f-mono);font-size:12.5px;color:var(--a);overflow-wrap:anywhere;flex:1;min-width:0}
+.copy{flex:none;font:inherit;font-size:13px;font-weight:700;padding:5px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;color:var(--ink)}
+.item.done{opacity:.5}
+.item.done h3{text-decoration:line-through}
+.hide-done .item.done{display:none}
+.note{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:14px 16px;color:var(--muted);font-size:15px;margin-top:30px}
+footer{border-top:1px solid var(--line);background:var(--card)}
+footer .wrap{padding-block:20px 30px;color:var(--muted);font-size:14px}
+@media (max-width:520px){.item{padding:14px}}
+@media (prefers-reduced-motion:reduce){.bar i,.item{transition:none}}
+</style>
+
+<header><div class="wrap">
+  <div class="eyebrow">CCC UACh · Revisión de protocolos 2026</div>
+  <h1>Correcciones pendientes</h1>
+  <p class="lede">Errores y contradicciones encontrados al leer los 24 protocolos. Marca cada uno cuando lo corrijas en el documento original; las marcas quedan guardadas en este navegador.</p>
+  <div class="progress">
+    <div class="bar" aria-hidden="true"><i id="barfill"></i></div>
+    <b id="count">0 / 0</b>
+    <label class="tog" for="hide"><input type="checkbox" id="hide"> Ocultar corregidas</label>
+  </div>
+  <nav class="legend" id="legend" aria-label="Ir a sección"></nav>
+</div></header>
+<main><div class="wrap" id="list"></div></main>
+<footer><div class="wrap">La revisión se hizo sobre el texto de los PDF. Los flujogramas e imágenes no se revisaron. Los resúmenes de la página «Protocolos del CCC» ya reflejan las decisiones del bloque verde.</div></footer>
+
+<script>
+const SECTIONS = [
+  { id: "decididas", fg: "var(--a)", bg: "var(--a-bg)", name: "Decididas: solo falta aplicarlas",
+    hint: "Ya definiste cómo corregirlas. Este es el cambio exacto en cada documento." },
+  { id: "ia", fg: "var(--ai)", bg: "var(--ai-bg)", name: "Enlaces con rastro de ChatGPT y Copilot",
+    hint: "Los enlaces terminan en ?utm_source=chatgpt.com o copilot.com. Reemplázalos por la versión limpia." },
+  { id: "decidir", fg: "var(--b)", bg: "var(--b-bg)", name: "Por decidir",
+    hint: "Contradicciones o vacíos entre protocolos que requieren una definición tuya o de Dirección." },
+  { id: "verificar", fg: "var(--c)", bg: "var(--c-bg)", name: "Verificar",
+    hint: "Puede que estén bien, pero conviene confirmarlos antes de la evaluación." },
+  { id: "redaccion", fg: "var(--d)", bg: "var(--d-bg)", name: "Redacción y formato",
+    hint: "Erratas, campos en blanco y restos de formato. Rápidas de corregir." }
+];
+
+const I = [
+/* ── DECIDIDAS ── */
+{ s: "decididas", id: "d1", p: ["Almacenamiento de Datos"], t: "SISTRAT se registra cada semana, no a fin de mes",
+  prob: "El protocolo dice «A finales de cada mes, esta información será registrada en plataforma SISTRAT». El Protocolo SISTRAT fija carga semanal los viernes.",
+  where: "Sección «Procedimiento para el almacenamiento de información», primer párrafo.",
+  fix: "<p>Reemplazar por: «Cada semana, preferentemente el viernes, las prestaciones se registran en SISTRAT según el Protocolo de Registro SISTRAT. A fin de mes, la información de AgendaPro se respalda en una memoria externa…»</p>" },
+{ s: "decididas", id: "d2", p: ["Solicitud de Información"], t: "Plazo de entrega: 15 días hábiles",
+  prob: "Solicitud de Información fija 10 días hábiles. Ficha Clínica fija 15. Queda en 15, el mismo plazo legal que usa Reclamos.",
+  where: "Dos lugares: «Etapa 9. Plazos de respuesta» y la viñeta «Diferenciar los plazos según el tipo de requerimiento».",
+  fix: "<p>Cambiar «10 días hábiles» por «15 días hábiles» en ambos lugares.</p>" },
+{ s: "decididas", id: "d3", p: ["Prevención de Recaídas"], t: "Recaídas debe remitir al Protocolo de Rescate",
+  prob: "Describe un rescate propio (llamada en 48 h, visita domiciliaria, «al menos tres acciones»), distinto del Protocolo de Rescate (3 inasistencias, 3 días de llamadas, encuadre, tope de 3 rescates).",
+  where: "Tres lugares: sección 4 (última viñeta), glosario «Rescate» y rol del Trabajador/a social.",
+  fix: "<ul><li><b>Sección 4:</b> reemplazar la viñeta por «Ante inasistencias no justificadas se activa el Protocolo de Rescate 2026-2027 del Centro».</li><li><b>Glosario:</b> agregar al final «El procedimiento operativo del CCC está definido en el Protocolo de Rescate».</li><li><b>Trabajador/a social:</b> cambiar «Ejecuta visitas domiciliarias y acciones de rescate» por «Apoya las acciones de rescate según el Protocolo de Rescate». Ese protocolo asigna las llamadas al equipo tratante.</li></ul>" },
+{ s: "decididas", id: "d4", p: ["Prevención del Suicidio"], t: "Usar la C-SSRS para adultos",
+  prob: "El anexo enlaza «C-SSRS-Pediatric-Cognitively Impaired-Since Last Contact», que es la versión pediátrica para personas con deterioro cognitivo. El Centro atiende adultos.",
+  where: "Anexos, última línea (aparece como «Microsoft Word - C-SSRS-Pediatric…»).",
+  fix: "<p>Descargar desde <b>cssrs.columbia.edu</b> la versión en español para adultos: <i>Screen Version</i> para el tamizaje y <i>Since Last Contact</i> para el seguimiento. Reemplazar el enlace y renombrar el anexo como «Escala Columbia (C-SSRS), versión adultos».</p>" },
+{ s: "decididas", id: "d5", p: ["Desintoxicación Domiciliaria"], t: "Falta la Etapa 2 y el índice muestra un error",
+  prob: "El índice muestra «Etapa 2: Inicio del proceso ¡Error! Marcador no definido.» y en el cuerpo se pasa de la Etapa 1 a la Etapa 3.",
+  where: "Índice y sección «Procedimientos operativos».",
+  fix: "<p>Escribir la Etapa 2 con lo que ya está en la Carta Gantt: inicio del tratamiento farmacológico e implementación de restricciones (permanencia en domicilio, no consumo, sin celular, supervisión farmacológica por adulto responsable). Luego actualizar el índice.</p>" },
+{ s: "decididas", id: "d6", p: ["Desintoxicación Domiciliaria"], t: "El consentimiento viene de un caso real",
+  prob: "El consentimiento nombra a «su madre» en los puntos 4 y 12, pide la firma de «esposa(o)» y fija 12 días, mientras el protocolo dice 12 a 15.",
+  where: "Anexo «Consentimiento informado para desintoxicación domiciliaria».",
+  fix: "<ul><li>«su madre» → «su referente de apoyo» (puntos 4 y 12).</li><li>«Firma del/la esposa(o)/acompañante responsable» → «Firma del referente de apoyo».</li><li>«duración de 12 días» → «duración de 12 a 15 días».</li></ul>" },
+{ s: "decididas", id: "d7", p: ["Desintoxicación Domiciliaria"], t: "Criterios de inclusión mal numerados",
+  prob: "La numeración salta del 2 al 4 (1, 2, 4, 5, 6). En el glosario dice «manera el síndrome».",
+  where: "«Criterios de inclusión» y glosario punto 2.",
+  fix: "<p>Renumerar del 1 al 5 y cambiar «manera» por «manejar».</p>" },
+
+/* ── IA ── */
+{ s: "ia", id: "ia1", p: ["Prevención del Suicidio"], t: "Cinco enlaces de referencia con rastro de Copilot",
+  prob: "Todos los enlaces de «Enlaces de referencia» terminan en ?utm_source=copilot.com. El texto visible puede verse bien: el rastro está en la dirección del hipervínculo.",
+  where: "Sección «Enlaces de referencia». En Word: clic derecho sobre cada enlace → Editar hipervínculo.",
+  urls: [
+    ["https://www.ventanillaunicasocial.gob.cl/ficha/310/fono-prevencion-suicidio?utm_source=copilot.com", "https://www.ventanillaunicasocial.gob.cl/ficha/310/fono-prevencion-suicidio"],
+    ["https://diprece.minsal.cl/prevencion-del-suicidio/?utm_source=copilot.com", "https://diprece.minsal.cl/prevencion-del-suicidio/"],
+    ["https://dae.uv.cl/?view=article&id=905&catid=2&utm_source=copilot.com", "https://dae.uv.cl/?view=article&id=905&catid=2"],
+    ["https://www.gob.cl/noticias/no-estas-solo-no-estas-sola-ministerio-de-salud-lanzo-fono-4141-de-prevencion-del-suicidio/?utm_source=copilot.com", "https://www.gob.cl/noticias/no-estas-solo-no-estas-sola-ministerio-de-salud-lanzo-fono-4141-de-prevencion-del-suicidio/"],
+    ["https://hcsba.cl/sitio/2025/09/15/conversar-nos-cuida-la-nueva-guia-ciudadana-del-minsal-para-la-prevencion-del-suicidio/?utm_source=copilot.com", "https://hcsba.cl/sitio/2025/09/15/conversar-nos-cuida-la-nueva-guia-ciudadana-del-minsal-para-la-prevencion-del-suicidio/"]
+  ],
+  extra: "Sugerencia: el enlace de dae.uv.cl es una noticia de la Universidad de Valparaíso. Como fuente institucional basta con los de MINSAL y gob.cl; puedes eliminarlo." },
+{ s: "ia", id: "ia2", p: ["Atención a Personas Trans"], t: "Enlace a la Ley 21.120 con rastro de ChatGPT",
+  prob: "El hipervínculo de la Biblioteca del Congreso termina en &utm_source=chatgpt.com.",
+  where: "Sección «Enlaces de referencia».",
+  urls: [["https://www.bcn.cl/leychile/Navegar?idNorma=1126480&utm_source=chatgpt.com", "https://www.bcn.cl/leychile/Navegar?idNorma=1126480"]] },
+{ s: "ia", id: "ia3", p: ["Todos"], t: "Revisar los demás originales en Word",
+  prob: "Solo pude ver los enlaces que el PDF conserva. Si algún texto se copió desde un chat, puede quedar rastro en documentos que no muestran el hipervínculo.",
+  where: "Cada archivo .docx original.",
+  fix: "<p>En Word: Ctrl+F (Cmd+F en Mac) y buscar <code>utm_source</code>, <code>chatgpt</code> y <code>copilot</code>. Para revisar también las direcciones ocultas, usar Alt+F9 para mostrar los códigos de campo, buscar y volver a ocultarlos con Alt+F9.</p>" },
+
+/* ── POR DECIDIR ── */
+{ s: "decidir", id: "b1", p: ["Pueblos Originarios", "Migrantes", "Satisfacción Usuaria"], t: "Los reclamos remiten al protocolo equivocado",
+  prob: "Pueblos Originarios y Migrantes dicen que la persona «recibirá carta de respuesta, según el Protocolo de Satisfacción Usuaria». Pero los canales, plazos (3, 10 y 15 días hábiles) y responsables están en el Protocolo de Gestión de Reclamos, Sugerencias y Felicitaciones.",
+  where: "«Situaciones que requieren especial atención» en ambos; viñeta «Libro de reclamos» en Satisfacción Usuaria.",
+  fix: "<p>Propuesta: remitir en los tres al Protocolo de Gestión de Reclamos. Satisfacción Usuaria puede quedar a cargo solo de la encuesta OPOC y la consulta continua.</p>" },
+{ s: "decidir", id: "b2", p: ["Manejo de Crisis", "Intervención con Familias"], t: "La crisis en el hogar está escrita dos veces",
+  prob: "Los pasos 8 a 12 de Familias repiten «Crisis en el hogar» de Manejo de Crisis: recibir aviso, informar al equipo, psiquiatra, intensificar en semanas 1 y 2, visitas en dupla, retomar después. Si uno cambia, el otro queda desactualizado.",
+  where: "Manejo de Crisis: «Crisis en el hogar». Familias: procedimientos 8 a 12.",
+  fix: "<p>Propuesta: que Manejo de Crisis sea el protocolo principal y Familias diga «Ante una crisis, aplicar el Protocolo de Manejo de Crisis», conservando solo lo propio del trabajo con la familia.</p>" },
+{ s: "decidir", id: "b3", p: ["Entrega de Medicamentos", "Rescate"], t: "Dos reglas distintas para quien no retira fármacos",
+  prob: "Medicamentos: tras dos semanas sin retirar, se necesita autorización médica. Rescate: no retirar lleva a encuadre con médico, luego con directora y luego al alta. Son compatibles, pero ninguno menciona al otro.",
+  where: "Medicamentos: «Inasistencia». Rescate: sección B.",
+  fix: "<p>Agregar en Medicamentos: «La falta reiterada de retiro activa el procedimiento B del Protocolo de Rescate».</p>" },
+{ s: "decidir", id: "b4", p: ["Gestión de Reclamos"], t: "Falta nombrar a quien subroga a Dirección",
+  prob: "El protocolo dice «Antes de la aprobación definitiva… dirección deberá formalizar quién la subroga». Ya está aprobado y la persona sigue sin nombrarse.",
+  where: "Punto 4.12, último párrafo.",
+  fix: "<p>Indicar el cargo subrogante y el medio de contacto inmediato, y eliminar la frase condicional.</p>" },
+{ s: "decidir", id: "b5", p: ["Prevención del Suicidio"], t: "Aparece un cargo que no existe",
+  prob: "La lista de contención inmediata dice «Notificar a Coordinador de Salud Mental». Ningún otro protocolo usa ese cargo; el resto del documento habla de «Coordinador».",
+  where: "Anexo «Checklist de contención inmediata».",
+  fix: "<p>Cambiar por «Notificar a Coordinador/a del programa (PAI-G o PAI-M)» o por el cargo real.</p>" },
+{ s: "decidir", id: "b6", p: ["Pueblos Originarios", "Migrantes"], t: "Citan el Programa Terapéutico 2025",
+  prob: "Ambos citan «Programa Terapéutico 2025». El vigente es el 2026.",
+  where: "«Enlaces de referencia», última línea.",
+  fix: "<p>Actualizar a «Programa Terapéutico 2026».</p>" },
+
+/* ── VERIFICAR ── */
+{ s: "verificar", id: "c1", p: ["Test de Drogas"], t: "Sustancias que el test de orina podría no detectar",
+  prob: "El glosario dice que el test detecta OH (alcohol) y LSD. Los paneles rápidos de orina más comunes no suelen incluir alcohol ni LSD. Si el kit del Centro no los incluye, el protocolo promete algo que no se mide.",
+  where: "Glosario, «Sustancias detectadas».",
+  fix: "<p>Revisar el inserto del kit que se usa y dejar solo las sustancias que efectivamente detecta.</p>" },
+{ s: "verificar", id: "c2", p: ["Solicitud de Información"], t: "Rol «Técnico/a en párvulos»",
+  prob: "Aparece en «Responsables y roles» y en ningún otro protocolo.",
+  where: "«Responsables y roles».",
+  fix: "<p>Confirmar que el cargo existe en el CCC. Si no, eliminarlo.</p>" },
+{ s: "verificar", id: "c3", p: ["Discapacidad Auditiva"], t: "Plazo de revisión distinto a la vigencia",
+  prob: "El Anexo 3 dice que se revisa cada dos años, pero la vigencia es 2026-2027, como el resto.",
+  where: "Anexo 3, último párrafo.",
+  fix: "<p>Unificar: revisión anual, como los demás protocolos.</p>" },
+{ s: "verificar", id: "c4", p: ["Prevención de Recaídas"], t: "Los anexos se listan pero no están",
+  prob: "Se enumeran los anexos 1 a 5 (ficha del taller, formato EPP, checklist, análisis funcional, matriz 4P), pero el PDF termina en la lista.",
+  where: "Sección «Anexos».",
+  fix: "<p>Adjuntar los cinco formatos o indicar dónde están archivados.</p>" },
+
+/* ── REDACCIÓN ── */
+{ s: "redaccion", id: "r1", p: ["Gestión de Reclamos"], t: "Frase cortada y erratas",
+  prob: "",
+  fix: "<ul><li>4.7: «Una vez registrada la present,» → «la presentación,».</li><li>4.10.3: «acuso recibo» → «acuse de recibo».</li><li>4.15: la frase «…de su seguimiento, si Para los reclamos…» quedó cortada: completar «si corresponde» y separar en dos oraciones.</li><li>La numeración salta de 5 a 7: falta el 6 en «Flujograma operativo».</li><li>Nombre de archivo: «sugerenicas» → «sugerencias».</li></ul>" },
+{ s: "redaccion", id: "r2", p: ["Manejo de Crisis", "Atención Médica"], t: "Índice con error de marcador",
+  prob: "",
+  fix: "<ul><li>Índice: «Objetivo ¡Error! Marcador no definido.» → actualizar la tabla de contenido.</li><li>«Elaboro» → «Elaboró».</li></ul>" },
+{ s: "redaccion", id: "r3", p: ["Ficha Clínica"], t: "Formulario con campos equivocados",
+  prob: "",
+  fix: "<ul><li>«¿Quién solicita la hora?» → «¿Quién solicita la ficha?».</li><li>«Fecha de firma de contacto terapéutico» → «contrato terapéutico».</li><li>El párrafo de solicitud empieza con un fragmento («a aquella persona que está en tratamiento…»): reescribir como «La persona en tratamiento puede solicitar su ficha mediante solicitud firmada…».</li></ul>" },
+{ s: "redaccion", id: "r4", p: ["Almacenamiento de Datos", "SISTRAT"], t: "Restos de formato en viñetas y números",
+  prob: "",
+  fix: "<ul><li>Almacenamiento: aparecen «o Orientar…» y «o Por lo mismo…» (viñetas convertidas en la letra «o»).</li><li>SISTRAT: «3. Procedimiento» y «3.4 Corrección de errores» quedaron dentro del texto; convertirlos en títulos.</li></ul>" },
+{ s: "redaccion", id: "r5", p: ["Discapacidad Auditiva", "Discapacidad Visual", "Discapacidad Psíquica"], t: "Fechas y vigencias",
+  prob: "",
+  fix: "<ul><li>Auditiva: vigencia «20260-2027» → «2026-2027». Anexo 1: «Facilitaré» → «Facilité».</li><li>Visual: «16 de abirl» → «abril».</li><li>Psíquica: no tiene fecha; la tabla dice «Fecha de elaboración» en vez de «Fecha de aprobación».</li></ul>" },
+{ s: "redaccion", id: "r6", p: ["Pueblos Originarios", "Migrantes", "Satisfacción Usuaria"], t: "Vigencia en blanco",
+  prob: "",
+  fix: "<p>Completar «Vigencia: 2026-2027» en la tabla de revisión.</p>" },
+{ s: "redaccion", id: "r7", p: ["Prevención del Suicidio"], t: "Erratas y títulos de anexos",
+  prob: "",
+  fix: "<ul><li>«Fimar con el referente» → «Firmar».</li><li>Los anexos se titulan «Microsoft Word - PHQ9.doc»: renombrar como «Cuestionario PHQ-9».</li></ul>" },
+{ s: "redaccion", id: "r8", p: ["Prevención de Recaídas"], t: "Errata",
+  prob: "", fix: "<p>«evaluación diagnósfica» → «diagnóstica» (nota de la sección 1).</p>" },
+{ s: "redaccion", id: "r9", p: ["Posvención del Suicidio"], t: "Título cortado y género",
+  prob: "",
+  fix: "<ul><li>El título «Procedimiento frente al suceso de un fallecimiento por» quedó partido: unir con «suicidio de usuario/a».</li><li>«vínculo con la usuaria» → «con el/la usuario/a».</li></ul>" },
+{ s: "redaccion", id: "r10", p: ["Personas Trans"], t: "Errata y anexos vacíos",
+  prob: "", fix: "<ul><li>«utilizándo» → «utilizando».</li><li>La sección «Anexos» está vacía: eliminarla o escribir «Sin anexos».</li></ul>" },
+{ s: "redaccion", id: "r11", p: ["Entrega de Medicamentos"], t: "Glosario y referencias incompletos",
+  prob: "", fix: "<ul><li>«Consentimiento informado: documento firmado por el usuario» quedó sin terminar.</li><li>Las referencias dicen solo «Normativa sanitaria vigente (ISP, MINSAL)»: citar las normas concretas.</li></ul>" },
+{ s: "redaccion", id: "r12", p: ["Test de Drogas", "Integración Social"], t: "Nombres de archivo",
+  prob: "", fix: "<ul><li>«Protoclo aplicacion test de drogas» → «Protocolo aplicación test de drogas».</li><li>«…Integración Social CCC UACh.docx (2).pdf» → quitar «.docx (2)».</li></ul>" }
+];
+
+const KEY = "ccc-correcciones-v1";
+let done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { done = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {} };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function render() {
+  document.getElementById("legend").innerHTML = SECTIONS.map(s => {
+    const n = I.filter(i => i.s === s.id).length;
+    return `<a href="#${s.id}" style="--bg:${s.bg};--fg:${s.fg}">${esc(s.name.split(":")[0])} · ${n}</a>`;
+  }).join("");
+  document.getElementById("list").innerHTML = SECTIONS.map(s => `
+    <section id="${s.id}" style="--bg:${s.bg};--fg:${s.fg}">
+      <div class="sh"><span class="dot"></span><div><h2>${esc(s.name)}</h2><p>${esc(s.hint)}</p></div></div>
+      ${I.filter(i => i.s === s.id).map(item).join("")}
+    </section>`).join("") +
+    `<div class="note">Cuando corrijas los documentos en Drive, avísame y actualizo los resúmenes del índice para que coincidan.</div>`;
+  update();
+}
+function item(i) {
+  return `<div class="item${done[i.id] ? " done" : ""}" id="it-${i.id}">
+    <input type="checkbox" id="ck-${i.id}" data-id="${i.id}" ${done[i.id] ? "checked" : ""} aria-label="Marcar como corregida: ${esc(i.t)}">
+    <div class="body">
+      <div class="tags">${i.p.map(p => `<span class="tag k">${esc(p)}</span>`).join("")}</div>
+      <h3><label for="ck-${i.id}">${esc(i.t)}</label></h3>
+      ${i.prob ? `<p>${esc(i.prob)}</p>` : ""}
+      ${i.where ? `<p class="where"><b>Dónde:</b> ${esc(i.where)}</p>` : ""}
+      ${i.urls ? `<div class="urls">${i.urls.map(([b, g], n) => `<div class="url"><span class="bad">${esc(b)}</span><span class="good"><code id="u-${i.id}-${n}">${esc(g)}</code><button class="copy" type="button" data-copy="u-${i.id}-${n}">Copiar</button></span></div>`).join("")}</div>` : ""}
+      ${i.extra ? `<p class="where" style="margin-top:8px">${esc(i.extra)}</p>` : ""}
+      ${i.fix ? `<div class="fix"><span class="l">Cómo corregir</span>${i.fix}</div>` : ""}
+    </div></div>`;
+}
+function update() {
+  const n = I.filter(i => done[i.id]).length;
+  document.getElementById("count").textContent = `${n} / ${I.length} corregidas`;
+  document.getElementById("barfill").style.width = (100 * n / I.length) + "%";
+}
+document.addEventListener("change", e => {
+  if (e.target.id === "hide") { document.body.classList.toggle("hide-done", e.target.checked); return; }
+  const id = e.target.dataset.id; if (!id) return;
+  if (e.target.checked) done[id] = 1; else delete done[id];
+  document.getElementById("it-" + id).classList.toggle("done", e.target.checked);
+  save(); update();
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-copy]"); if (!b) return;
+  const el = document.getElementById(b.dataset.copy);
+  const ok = () => { b.textContent = "Copiado"; setTimeout(() => b.textContent = "Copiar", 1500); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Seleccionado"; setTimeout(() => b.textContent = "Copiar", 1500); };
+  try { navigator.clipboard.writeText(el.textContent).then(ok, fallback); } catch (err) { fallback(); }
+});
+render();
+</script>
+</body></html>
